@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link, Navigate, Outlet, useLocation } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
-import { IoAdd } from "react-icons/io5";
 import { getAuth } from "firebase/auth";
-import Badge from "components/Badge/Badge";
+import Badge from "components/ui/Badge/Badge";
 import logo from "logo.svg";
+import ChannelsList from "modules/Channels/ChannelsList/ChannelsList";
 
 export default function AuthLayout() {
   const auth = getAuth();
@@ -60,20 +60,7 @@ export default function AuthLayout() {
                 </div>
               </Link>
 
-              <div className="mt-20">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-bold">CHANNELS</p>
-
-                  <button className="p-1 rounded-md hover:bg-gray-100 transition-all">
-                    <IoAdd />
-                  </button>
-                </div>
-                <div className="mt-2 text-lg space-y-1">
-                  <Link to="/12">
-                    <p className="cursor-pointer"># Channel 1</p>
-                  </Link>
-                </div>
-              </div>
+              <ChannelsList />
             </div>
 
             <button

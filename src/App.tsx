@@ -1,10 +1,10 @@
 import React from "react";
 import "./firebase";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import AuthLayout from "components/AuthLayout/AuthLayout";
+import AuthLayout from "components/layouts/AuthLayout/AuthLayout";
 import Login from "modules/Login/Login";
 import Inbox from "modules/Inbox/Inbox";
-import Channels from "modules/Channels/Channels";
+import ViewChannel from "modules/Channels/ViewChannel/ViewChannel";
 
 function App() {
   return (
@@ -13,7 +13,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<AuthLayout />}>
           <Route index element={<Inbox />} />
-          <Route path=":id" element={<Channels />} />
+          <Route path=":id" element={<ViewChannel />} />
         </Route>
       </Routes>
     </BrowserRouter>

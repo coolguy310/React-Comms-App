@@ -1,15 +1,18 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface IChannel {
   id: string;
   name: string;
-  createdAt: Date;
+  createdAt: Timestamp;
 }
 
-export interface IReplies {
+export interface IPost {
   text: string;
   authorEmail: string;
   authorImage: string;
   authorName: string;
   channelId: string;
+  isFirstPost?: boolean;
   id: string;
-  createdAt: Date;
+  createdAt: Timestamp;
 }

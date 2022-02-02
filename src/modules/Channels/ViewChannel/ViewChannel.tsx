@@ -10,10 +10,13 @@ import {
   where,
 } from "firebase/firestore";
 import { useParams } from "react-router-dom";
-import Input from "components/forms/Input/Input";
+import Textarea from "components/forms/Textarea/Textarea";
 import db from "../../../firebase";
 import { IChannel, IPost } from "utils/types";
 import { getAuth } from "firebase/auth";
+import Text from "components/ui/Text/Text";
+import Box from "components/ui/Box/Box";
+import Avatar from "components/ui/Avatar/Avatar";
 
 export default function ViewChannel() {
   const [channel, setChannel] = useState<Partial<IChannel> | null>(null);
@@ -24,10 +27,12 @@ export default function ViewChannel() {
   const auth = getAuth();
 
   useEffect(() => {
+    // Clear channel states when switching between channel routes
     setChannel(null);
   }, [params.id]);
 
   useEffect(() => {
+    // Get channel by id
     (async () => {
       const snap = await getDoc(doc(db, "channels", params.id!));
 
@@ -40,6 +45,7 @@ export default function ViewChannel() {
   }, [params.id]);
 
   useEffect(() => {
+    // Fetch channel posts
     const unsub = onSnapshot(
       query(collection(db, "posts"), where("channelId", "==", params.id!)),
       (snapshot) => {
@@ -57,8 +63,9 @@ export default function ViewChannel() {
 
   const submitReply = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!newPostText.trim()) return;
+    if (!newPostText.trim()) return; // Text can not be empty
 
+    // Add to firebase posts collection
     await addDoc(collection(db as Firestore, "posts"), {
       text: newPostText,
       authorEmail: auth.currentUser!.email,
@@ -69,7 +76,7 @@ export default function ViewChannel() {
       createdAt: new Date(),
     });
 
-    setNewPostText("");
+    setNewPostText(""); // Reset text
   };
 
   const firstPost = channelPosts.find(({ isFirstPost }) => isFirstPost);
@@ -85,68 +92,79 @@ export default function ViewChannel() {
   }
 
   return (
-    <div className="pt-2">
-      <h1 className="text-4xl font-bold px-12">{channel?.name}</h1>
-      <hr className="mt-8 mb-4" />
+    <Box css={{ paddingTop: 8 }}>
+      <Text as="h1" fontWeight="bold" css={{ padding: "0 3rem", fontSize: 36 }}>
+        {channel.name}
+      </Text>
+      <Box as="hr" css={{ marginTop: "2rem", marginBottom: "1rem" }} />
       {firstPost && (
-        <div className="py-3 px-12 flex space-x-4">
-          <img
-            src={firstPost?.authorImage}
-            alt="user"
-            className="w-8 h-8 rounded-full"
-          />
+        <Box css={{ display: "flex", padding: "0.75rem 3rem" }}>
+          <Avatar css={{ marginRight: "1rem" }} src={firstPost.authorImage} />
+
           <div>
-            <div className="flex items-baseline space-x-2">
-              <p className="font-bold text-lg">{firstPost?.authorName}</p>
-              <p className="text-xs">
-                at {new Date(firstPost?.createdAt.toDate()).toLocaleString()}
-              </p>
-            </div>
-            <p>{firstPost?.text}</p>
+            <Box css={{ display: "flex", alignItems: "baseline" }}>
+              <Text fontSize="lg" fontWeight="bold" css={{ marginRight: 8 }}>
+                {firstPost?.authorName}
+              </Text>
+              <Text fontSize="xs">
+                at {new Date(firstPost.createdAt.toDate()).toLocaleString()}
+              </Text>
+            </Box>
+            <Text>{firstPost.text}</Text>
           </div>
-        </div>
+        </Box>
       )}
 
-      <div className="px-24 pt-8">
+      <Box css={{ padding: "2rem 6rem 0" }}>
         {!!postReplies.length && (
-          <p className="font-semibold text-md mb-1">Replies</p>
+          <Text fontWeight="bold" css={{ marginBottom: 4 }}>
+            Replies
+          </Text>
         )}
         {postReplies.map(({ id, text, authorImage, authorName, createdAt }) => (
           <div key={id}>
-            <hr />
-            <div className="py-3 px-2 flex space-x-4">
-              <img
-                src={authorImage}
-                alt="user"
-                className="w-8 h-8 rounded-full"
-              />
-              <div>
-                <div className="flex items-baseline space-x-2">
-                  <p className="font-bold text-sm">{authorName}</p>
-                  <p className="text-xs">
+            <Box as="hr" />
+            <Box css={{ padding: "0.75rem 0.5rem", display: "flex" }}>
+              <Avatar src={authorImage} />
+              <Box css={{ marginLeft: "1rem" }}>
+                <Box css={{ display: "flex", alignItems: "baseline" }}>
+                  <Text
+                    fontWeight="bold"
+                    css={{ marginRight: "0.5rem" }}
+                    fontSize="sm"
+                  >
+                    {authorName}
+                  </Text>
+                  <Text fontSize="xs">
                     at {new Date(createdAt.toDate()).toLocaleString()}
-                  </p>
-                </div>
-                <p className="text-sm">{text}</p>
-              </div>
-            </div>
+                  </Text>
+                </Box>
+                <Text fontSize="sm">{text}</Text>
+              </Box>
+            </Box>
           </div>
         ))}
 
-        <form onSubmit={submitReply} className="py-3 px-2 flex space-x-4">
-          <img
+        <Box
+          as="form"
+          css={{ padding: "0.75rem 0.5rem", display: "flex" }}
+          onSubmit={submitReply}
+        >
+          <Avatar
             src={auth.currentUser!.photoURL as string}
-            alt="user"
-            className="w-8 h-8 rounded-full"
+            css={{
+              marginRight: "1rem",
+            }}
           />
-          <Input
+
+          <Textarea
             required
             value={newPostText}
             onChange={(event) => setNewPostText(event.target.value)}
             placeholder={placeholderText}
           />
-        </form>
-      </div>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   );
 }

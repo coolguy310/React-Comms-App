@@ -5,6 +5,9 @@ import { IoAdd } from "react-icons/io5";
 import db from "../../../firebase";
 import { Firestore, collection, addDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import Box from "components/ui/Box/Box";
+import Text from "components/ui/Text/Text";
+import Button from "components/ui/Button/Button";
 
 export default function CreateChannelModal() {
   const [channelName, setChannelName] = useState("");
@@ -17,55 +20,71 @@ export default function CreateChannelModal() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    // Add to channel collection
     const data = await addDoc(collection(db as Firestore, "channels"), {
       name: channelName,
       createdAt: new Date(),
     });
 
+    // Then route to the newly created channel
     navigate(`/${data.id}`);
 
+    // Close modal and reset channel name
     onClose();
     setChannelName("");
   };
 
   return (
     <div>
-      <button
+      <Box
+        as="button"
         onClick={() => setIsOpen(true)}
-        className="p-1 rounded-md hover:bg-gray-100 transition-all"
+        css={{
+          padding: 4,
+          borderRadius: 6,
+          "&:hover": { backgroundColor: "$gray2" },
+        }}
       >
         <IoAdd />
-      </button>
+      </Box>
 
       <Modal isOpen={isOpen} onClose={onClose}>
-        <div className="w-96">
-          <h4 className="font-bold text-lg">Create Channel</h4>
-          <form onSubmit={handleSubmit} className="mt-4">
-            <div className="space-y-2">
-              <label htmlFor="name">Channel name</label>
+        <Box css={{ width: "24rem" }}>
+          <Text as="h4" fontSize="lg" fontWeight="bold">
+            Create Channel
+          </Text>
+          <Box as="form" css={{ marginTop: "1rem" }} onSubmit={handleSubmit}>
+            <Box>
+              <Text css={{ marginBottom: 8 }} as="label" htmlFor="name">
+                Channel name
+              </Text>
               <Input
+                id="name"
                 required
                 value={channelName}
                 onChange={(event) => setChannelName(event.target.value)}
               />
-            </div>
-            <div className="flex space-x-4 mt-6">
-              <button
+            </Box>
+            <Box css={{ display: "flex", marginTop: 24 }}>
+              <Button
                 type="button"
                 onClick={onClose}
-                className="h-12 rounded-md border border-gray-400 w-40"
+                variant="bordered"
+                css={{ marginRight: "1rem", width: "10rem", height: "3rem" }}
+                className="h-12 rounded-md w-40"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
-                className="h-12 rounded-md text-white bg-primary w-full"
+                variant="primary"
+                css={{ width: "100%", height: "3rem" }}
               >
                 Create
-              </button>
-            </div>
-          </form>
-        </div>
+              </Button>
+            </Box>
+          </Box>
+        </Box>
       </Modal>
     </div>
   );

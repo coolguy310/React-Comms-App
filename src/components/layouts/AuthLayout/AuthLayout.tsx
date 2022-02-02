@@ -5,6 +5,15 @@ import { getAuth } from "firebase/auth";
 import Badge from "components/ui/Badge/Badge";
 import logo from "logo.svg";
 import ChannelsList from "modules/Channels/ChannelsList/ChannelsList";
+import {
+  LinkItem,
+  LogoutButton,
+  MainContent,
+  PageContainer,
+  SidebarContent,
+  SidebarWrapper,
+} from "./AuthLayout.styled";
+import Text from "components/ui/Text/Text";
 
 export default function AuthLayout() {
   const auth = getAuth();
@@ -14,6 +23,7 @@ export default function AuthLayout() {
   let location = useLocation();
 
   useEffect(() => {
+    // Listen for auth state changes
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setUser(user);
@@ -47,34 +57,29 @@ export default function AuthLayout() {
   }
 
   return (
-    <div className="">
-      <div className="py-8 min-h-screen h-full flex items-stretch">
-        <div className="w-64 h-full fixed z-30 top-0 py-8 shrink-0">
-          <div className=" h-full border-r-2 pl-8 pr-5 py-2 border-gray-500 flex flex-col justify-between">
-            <div>
-              <img src={logo} alt="logo" />
-              <Link to="/">
-                <div className="flex mt-12 cursor-pointer space-x-6 items-center justify-between">
-                  <p className="text-lg">Inbox</p>
-                  <Badge>4</Badge>
-                </div>
-              </Link>
+    <PageContainer>
+      <SidebarWrapper>
+        <SidebarContent>
+          <div>
+            <img src={logo} alt="logo" />
+            <Link to="/">
+              <LinkItem>
+                <Text fontSize="lg">Inbox</Text>
+                <Badge>4</Badge>
+              </LinkItem>
+            </Link>
 
-              <ChannelsList />
-            </div>
-
-            <button
-              onClick={signOut}
-              className="flex items-center py-3 justify-center rounded-md "
-            >
-              <BiLogOut className="mr-2" /> Logout
-            </button>
+            <ChannelsList />
           </div>
-        </div>
-        <div className="w-full pl-64">
-          <Outlet />
-        </div>
-      </div>
-    </div>
+
+          <LogoutButton onClick={signOut}>
+            <BiLogOut /> Logout
+          </LogoutButton>
+        </SidebarContent>
+      </SidebarWrapper>
+      <MainContent>
+        <Outlet />
+      </MainContent>
+    </PageContainer>
   );
 }

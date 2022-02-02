@@ -8,6 +8,7 @@ import ViewChannel from "modules/Channels/ViewChannel/ViewChannel";
 
 function App() {
   return (
+    // Declare routes
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />

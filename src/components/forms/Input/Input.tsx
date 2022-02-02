@@ -1,14 +1,20 @@
 import React from "react";
+import { StyledInput } from "./Input.styled";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-export default function Input({ value, onChange, placeholder }: InputProps) {
+export default function Input({
+  value,
+  onChange,
+  placeholder,
+  ...rest
+}: InputProps) {
   return (
-    <input
-      className="h-12 border rounded-xl border-gray-400 px-4 w-full"
+    <StyledInput
       value={value}
       onChange={onChange}
       placeholder={placeholder}
+      {...rest}
     />
   );
 }

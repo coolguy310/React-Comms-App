@@ -1,13 +1,10 @@
 import React, { ReactNode } from "react";
+import { BadgeWrapper } from "./Badge.styled";
 
 interface BadgeProps {
   children: ReactNode;
 }
 
 export default function Badge({ children }: BadgeProps) {
-  return (
-    <div className="w-6 h-6 flex items-center justify-center rounded-md bg-primary text-white">
-      {children}
-    </div>
-  );
+  return <BadgeWrapper>{children}</BadgeWrapper>;
 }

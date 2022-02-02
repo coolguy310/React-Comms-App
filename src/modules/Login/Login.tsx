@@ -2,6 +2,7 @@ import React from "react";
 import { FcGoogle } from "react-icons/fc";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useLocation, useNavigate } from "react-router-dom";
+import { GoogleButton, LoginHeading, Wrapper } from "./Login.styled";
 
 export default function Login() {
   const auth = getAuth();
@@ -19,21 +20,20 @@ export default function Login() {
     // Start sign in process
     try {
       await signInWithPopup(auth, provider);
+
+      // return the user back to the most recent route
       navigate(fromPath, { replace: true });
     } catch (error: any) {
       console.log(error.message);
     }
   };
   return (
-    <div className="justify-center items-center flex min-h-screen flex-col space-y-12">
-      <h1 className="text-4xl font-extrabold">Login to Comms</h1>
+    <Wrapper>
+      <LoginHeading>Login to Comms</LoginHeading>
 
-      <button
-        onClick={signinWithGoogle}
-        className="flex items-center bg-primary py-3 px-5 rounded-md text-white"
-      >
-        <FcGoogle className="mr-2" /> Login with Google
-      </button>
-    </div>
+      <GoogleButton onClick={signinWithGoogle}>
+        <FcGoogle /> Login with Google
+      </GoogleButton>
+    </Wrapper>
   );
 }

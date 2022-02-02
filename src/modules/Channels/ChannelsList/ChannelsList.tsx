@@ -4,11 +4,14 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { IChannel } from "utils/types";
 import CreateChannelModal from "../CreateChannel/CreateChannelModal";
+import Box from "components/ui/Box/Box";
+import Text from "components/ui/Text/Text";
 
 export default function ChannelsList() {
   const [channelList, setChannelList] = useState<IChannel[]>([]);
 
   useEffect(() => {
+    // Fetch channels
     const unsub = onSnapshot(collection(db, "channels"), (snapshot) => {
       setChannelList(
         snapshot.docs.map((doc) => ({
@@ -22,19 +25,35 @@ export default function ChannelsList() {
   }, []);
 
   return (
-    <div className="mt-20">
-      <div className="flex items-center justify-between">
-        <p className="text-sm font-bold">CHANNELS</p>
+    <Box css={{ marginTop: "5rem" }}>
+      <Box
+        css={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <Text fontSize="sm" fontWeight="bold">
+          CHANNELS
+        </Text>
 
         <CreateChannelModal />
-      </div>
-      <div className="mt-2 text-lg">
+      </Box>
+      <Box css={{ marginTop: 8, fontSize: "large" }}>
         {channelList.map(({ id, name }) => (
           <Link key={id} to={`/${id}`}>
-            <p className="cursor-pointer hover:font-semibold mb-2"># {name}</p>
+            <Text
+              css={{
+                cursor: "pointer",
+                marginBottom: 8,
+                "&:hover": { fontWeight: "bold" },
+              }}
+            >
+              # {name}
+            </Text>
           </Link>
         ))}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

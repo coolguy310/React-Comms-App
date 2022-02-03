@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, Navigate, Outlet, useLocation } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 import { getAuth } from "firebase/auth";
-import Badge from "components/ui/Badge/Badge";
+// import Badge from "components/ui/Badge/Badge";
 import logo from "logo.svg";
 import ChannelsList from "modules/Channels/ChannelsList/ChannelsList";
 import {
@@ -65,7 +65,7 @@ export default function AuthLayout() {
             <Link to="/">
               <LinkItem>
                 <Text fontSize="lg">Inbox</Text>
-                <Badge>4</Badge>
+                {/* <Badge>4</Badge> */}
               </LinkItem>
             </Link>
 

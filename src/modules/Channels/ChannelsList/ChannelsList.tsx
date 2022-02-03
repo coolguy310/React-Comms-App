@@ -6,6 +6,7 @@ import { IChannel } from "utils/types";
 import CreateChannelModal from "../CreateChannel/CreateChannelModal";
 import Box from "components/ui/Box/Box";
 import Text from "components/ui/Text/Text";
+import { sortByDate } from "utils/helpers";
 
 export default function ChannelsList() {
   const [channelList, setChannelList] = useState<IChannel[]>([]);
@@ -24,6 +25,8 @@ export default function ChannelsList() {
     return unsub;
   }, []);
 
+  const sortedChannels = sortByDate(channelList);
+
   return (
     <Box css={{ marginTop: "5rem" }}>
       <Box
@@ -40,7 +43,7 @@ export default function ChannelsList() {
         <CreateChannelModal />
       </Box>
       <Box css={{ marginTop: 8, fontSize: "large" }}>
-        {channelList.map(({ id, name }) => (
+        {sortedChannels.map(({ id, name }) => (
           <Link key={id} to={`/${id}`}>
             <Text
               css={{

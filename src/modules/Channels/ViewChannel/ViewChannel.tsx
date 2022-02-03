@@ -17,6 +17,9 @@ import { getAuth } from "firebase/auth";
 import Text from "components/ui/Text/Text";
 import Box from "components/ui/Box/Box";
 import Avatar from "components/ui/Avatar/Avatar";
+import Button from "components/ui/Button/Button";
+import { nanoid } from "nanoid";
+import { sortByDate } from "utils/helpers";
 
 export default function ViewChannel() {
   const [channel, setChannel] = useState<Partial<IChannel> | null>(null);
@@ -65,18 +68,21 @@ export default function ViewChannel() {
     event.preventDefault();
     if (!newPostText.trim()) return; // Text can not be empty
 
+    setNewPostText(""); // Reset text
+
     // Add to firebase posts collection
     await addDoc(collection(db as Firestore, "posts"), {
       text: newPostText,
+      authorId: auth.currentUser!.uid,
       authorEmail: auth.currentUser!.email,
       authorImage: auth.currentUser!.photoURL,
       authorName: auth.currentUser!.displayName,
       isFirstPost: !channelPosts.length,
       channelId: params.id,
+      triageId: nanoid(),
+      channelName: channel?.name,
       createdAt: new Date(),
     });
-
-    setNewPostText(""); // Reset text
   };
 
   const firstPost = channelPosts.find(({ isFirstPost }) => isFirstPost);
@@ -86,6 +92,8 @@ export default function ViewChannel() {
 
   if (!firstPost)
     placeholderText = "Write the first post and hit enter to send";
+
+  const sortedReplies = sortByDate(postReplies);
 
   if (!channel) {
     return null;
@@ -116,34 +124,36 @@ export default function ViewChannel() {
       )}
 
       <Box css={{ padding: "2rem 6rem 0" }}>
-        {!!postReplies.length && (
+        {!!sortedReplies.length && (
           <Text fontWeight="bold" css={{ marginBottom: 4 }}>
             Replies
           </Text>
         )}
-        {postReplies.map(({ id, text, authorImage, authorName, createdAt }) => (
-          <div key={id}>
-            <Box as="hr" />
-            <Box css={{ padding: "0.75rem 0.5rem", display: "flex" }}>
-              <Avatar src={authorImage} />
-              <Box css={{ marginLeft: "1rem" }}>
-                <Box css={{ display: "flex", alignItems: "baseline" }}>
-                  <Text
-                    fontWeight="bold"
-                    css={{ marginRight: "0.5rem" }}
-                    fontSize="sm"
-                  >
-                    {authorName}
-                  </Text>
-                  <Text fontSize="xs">
-                    at {new Date(createdAt.toDate()).toLocaleString()}
-                  </Text>
+        {sortedReplies.map(
+          ({ id, text, authorImage, authorName, createdAt }) => (
+            <div id={id} key={id}>
+              <Box as="hr" />
+              <Box css={{ padding: "0.75rem 0.5rem", display: "flex" }}>
+                <Avatar src={authorImage} />
+                <Box css={{ marginLeft: "1rem" }}>
+                  <Box css={{ display: "flex", alignItems: "baseline" }}>
+                    <Text
+                      fontWeight="bold"
+                      css={{ marginRight: "0.5rem" }}
+                      fontSize="sm"
+                    >
+                      {authorName}
+                    </Text>
+                    <Text fontSize="xs">
+                      at {new Date(createdAt.toDate()).toLocaleString()}
+                    </Text>
+                  </Box>
+                  <Text fontSize="sm">{text}</Text>
                 </Box>
-                <Text fontSize="sm">{text}</Text>
               </Box>
-            </Box>
-          </div>
-        ))}
+            </div>
+          )
+        )}
 
         <Box
           as="form"
@@ -157,12 +167,27 @@ export default function ViewChannel() {
             }}
           />
 
-          <Textarea
-            required
-            value={newPostText}
-            onChange={(event) => setNewPostText(event.target.value)}
-            placeholder={placeholderText}
-          />
+          <Box css={{ width: "100%" }}>
+            <Textarea
+              required
+              value={newPostText}
+              onChange={(event) => setNewPostText(event.target.value)}
+              placeholder={placeholderText}
+            />
+            <Box css={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button
+                type="submit"
+                variant="bordered"
+                css={{
+                  width: "12rem",
+                  padding: "0.5rem 1rem",
+                  backgroundColor: "$gray6",
+                }}
+              >
+                Submit
+              </Button>
+            </Box>
+          </Box>
         </Box>
       </Box>
     </Box>

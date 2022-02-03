@@ -3,6 +3,8 @@ import { FcGoogle } from "react-icons/fc";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useLocation, useNavigate } from "react-router-dom";
 import { GoogleButton, LoginHeading, Wrapper } from "./Login.styled";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import db from "../../firebase";
 
 export default function Login() {
   const auth = getAuth();
@@ -19,7 +21,21 @@ export default function Login() {
     auth.useDeviceLanguage();
     // Start sign in process
     try {
-      await signInWithPopup(auth, provider);
+      const { user } = await signInWithPopup(auth, provider);
+
+      // If user does not already exist in the database, add user to database
+      const snap = await getDoc(doc(db, "users", user.uid!));
+
+      if (!snap.exists()) {
+        await setDoc(doc(db, "users", user.uid), {
+          uid: user.uid,
+          name: user.displayName,
+          authProvider: "google",
+          email: user.email,
+          photoURL: user.photoURL,
+          phoneNumber: user.phoneNumber,
+        });
+      }
 
       // return the user back to the most recent route
       navigate(fromPath, { replace: true });

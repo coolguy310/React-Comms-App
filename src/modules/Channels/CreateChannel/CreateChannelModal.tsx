@@ -8,11 +8,13 @@ import { useNavigate } from "react-router-dom";
 import Box from "components/ui/Box/Box";
 import Text from "components/ui/Text/Text";
 import Button from "components/ui/Button/Button";
+import { getAuth } from "firebase/auth";
 
 export default function CreateChannelModal() {
   const [channelName, setChannelName] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
+  const auth = getAuth();
   let navigate = useNavigate();
 
   const onClose = () => setIsOpen(false);
@@ -22,6 +24,7 @@ export default function CreateChannelModal() {
 
     // Add to channel collection
     const data = await addDoc(collection(db as Firestore, "channels"), {
+      creatorId: auth!.currentUser?.uid,
       name: channelName,
       createdAt: new Date(),
     });

@@ -4,10 +4,17 @@ import Box from "components/ui/Box/Box";
 import Button from "components/ui/Button/Button";
 import { getAuth } from "firebase/auth";
 import { MentionsInput, Mention, SuggestionDataItem } from "react-mentions";
-import { addDoc, collection, Firestore, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  Firestore,
+  onSnapshot,
+  setDoc,
+} from "firebase/firestore";
 import db from "../../../../../firebase";
 import { nanoid } from "nanoid";
 import { useParams } from "react-router-dom";
+import { IUser } from "utils/types";
 
 interface NewPostProps {
   isFirstPost: boolean;
@@ -17,26 +24,19 @@ interface NewPostProps {
 export default function NewPost({ isFirstPost, channelName }: NewPostProps) {
   const [newPostText, setNewPostText] = useState<string>("");
   const [mentions, setMentions] = useState<SuggestionDataItem[]>([]);
-  const [userSuggestions, setUserSuggestions] = useState<SuggestionDataItem[]>(
-    []
-  );
+  const [users, setUsers] = useState<IUser[]>([]);
 
   const auth = getAuth();
   const params = useParams();
 
   useEffect(() => {
-    // Fetch users and map to userSuggestions state
+    // Fetch users and map to users state
     const unsub = onSnapshot(collection(db, "users"), (snapshot) => {
-      setUserSuggestions(
-        snapshot.docs.map((doc) => ({
-          display: doc.data().name,
-          id: doc.id,
-        }))
-      );
+      setUsers(snapshot.docs.map((doc) => doc.data() as IUser));
     });
 
     return unsub;
-  }, []);
+  }, [auth.currentUser]);
 
   const submitReply = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,8 +44,7 @@ export default function NewPost({ isFirstPost, channelName }: NewPostProps) {
 
     setNewPostText(""); // Reset text
 
-    // Add to firebase posts collection
-    await addDoc(collection(db as Firestore, "posts"), {
+    const postPayload = {
       text: newPostText,
       authorId: auth.currentUser!.uid,
       authorEmail: auth.currentUser!.email,
@@ -53,17 +52,28 @@ export default function NewPost({ isFirstPost, channelName }: NewPostProps) {
       authorName: auth.currentUser!.displayName,
       isFirstPost,
       channelId: params.id,
-      triageId: nanoid(),
+      id: nanoid(),
       mentions: mentions.map(({ id }) => id), // Map mentions into an array of mentioned user ids
       channelName,
       createdAt: new Date(),
-    });
+    };
+
+    // Add post to channel
+    await setDoc(
+      doc(db as Firestore, "channels", params.id!, "posts", postPayload.id),
+      postPayload
+    );
   };
 
   let placeholderText = "Write a comment and hit enter to send";
 
   if (isFirstPost)
     placeholderText = "Write the first post and hit enter to send";
+
+  const userSuggestions: SuggestionDataItem[] = users.map(({ uid, name }) => ({
+    id: uid,
+    display: name,
+  }));
 
   return (
     <Box

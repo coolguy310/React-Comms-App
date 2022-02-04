@@ -2,14 +2,7 @@ import React, { useEffect, useState } from "react";
 import Avatar from "components/ui/Avatar/Avatar";
 import Box from "components/ui/Box/Box";
 import Text from "components/ui/Text/Text";
-import {
-  collection,
-  doc,
-  getDoc,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, doc, getDoc, onSnapshot, query } from "firebase/firestore";
 import { useParams } from "react-router-dom";
 import { sortByDate } from "utils/helpers";
 import { IChannel, IPost } from "utils/types";
@@ -41,16 +34,11 @@ export default function ViewChannel() {
   }, [params.id]);
 
   useEffect(() => {
-    // Fetch channel posts
+    // Fetch all posts of the channel
     const unsub = onSnapshot(
-      query(collection(db, "posts"), where("channelId", "==", params.id!)),
+      query(collection(db, "channels", params.id!, "posts")),
       (snapshot) => {
-        setChannelPosts(
-          snapshot.docs.map((doc) => ({
-            ...(doc.data() as Omit<IPost, "id">),
-            id: doc.id,
-          }))
-        );
+        setChannelPosts(snapshot.docs.map((doc) => doc.data() as IPost));
       }
     );
 

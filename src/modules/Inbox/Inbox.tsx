@@ -5,14 +5,7 @@ import Button from "components/ui/Button/Button";
 import Text from "components/ui/Text/Text";
 import { InboxText, InboxList } from "./Inbox.styled";
 import { IPost } from "utils/types";
-import {
-  collection,
-  doc,
-  onSnapshot,
-  query,
-  setDoc,
-  where,
-} from "firebase/firestore";
+import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
 import db from "../../firebase";
 import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
@@ -21,65 +14,36 @@ import Flex from "components/ui/Flex/Flex";
 
 export default function Inbox() {
   const [inbox, setInbox] = useState<IPost[]>([]);
-  const [triaged, setTriaged] = useState<string[]>([]);
   const [isEmpty, setIsEmpty] = useState<boolean>(false);
 
   const auth = getAuth();
   let navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch channel posts
-    let unsub;
-
-    // make sure triages are fetched before getting inbox
-    if (triaged.length) {
-      unsub = onSnapshot(
-        // fetch posts whose triageIds are not contained in the array of triaged posts
-        query(collection(db, "posts"), where("triageId", "not-in", triaged)),
-        ({ docs }) => {
-          // Then filter posts that belong to the logged in user, (you wouldnt want to see your posts in your video)
-          const currentInbox = docs.filter(
-            (doc) => doc.data().authorId !== auth.currentUser!.uid
-          );
-
-          // If currentInbox is empty, setIsEmpty to true
-          setIsEmpty(!currentInbox.length);
-          setInbox(
-            currentInbox.map((doc) => ({
-              ...(doc.data() as Omit<IPost, "id">),
-              id: doc.id,
-            }))
-          );
-        }
-      );
-    }
-
-    return unsub;
-  }, [auth.currentUser, triaged]);
-
-  useEffect(() => {
+    // fetch inbox by user uid
     const unsub = onSnapshot(
-      // Listen for, and fetch triaged posts
-      query(collection(db, "users", auth.currentUser!.uid, "triaged")),
-      (snapshot) => {
-        setTriaged(["", ...snapshot.docs.map((doc) => doc.id)]);
+      collection(db, "users", auth.currentUser!.uid, "inbox"),
+      ({ docs }) => {
+        setIsEmpty(!docs.length);
+        setInbox(
+          docs.map((doc) => ({
+            ...(doc.data() as IPost),
+          }))
+        );
       }
     );
 
     return unsub;
   }, [auth.currentUser]);
 
-  const triagePost = async (
+  const markAsDone = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     post: IPost
   ) => {
     event.stopPropagation();
 
-    // Add post to collection of triaged posts
-    await setDoc(
-      doc(db, "users", auth.currentUser!.uid, "triaged", post.triageId),
-      post
-    );
+    // Remove post from inbox
+    await deleteDoc(doc(db, "users", auth.currentUser!.uid, "inbox", post.id));
   };
 
   const openInboxPost = async (post: IPost) => {
@@ -156,7 +120,7 @@ export default function Inbox() {
                     }}
                   />
                 </Box>
-                <Flex alignCenter css={{ width: "100%", maxWidth: "16rem" }}>
+                <Flex alignEnd css={{ width: "100%", maxWidth: "16rem" }}>
                   <Button
                     variant="bordered"
                     css={{
@@ -164,7 +128,7 @@ export default function Inbox() {
                       backgroundColor: "$gray3",
                       fontSize: "small",
                     }}
-                    onClick={(event) => triagePost(event, post)}
+                    onClick={(event) => markAsDone(event, post)}
                   >
                     Mark as done
                   </Button>
@@ -177,7 +141,6 @@ export default function Inbox() {
                         color: "white",
                         marginLeft: 8,
                       }}
-                      onClick={(event) => triagePost(event, post)}
                     >
                       Response Requested
                     </Button>

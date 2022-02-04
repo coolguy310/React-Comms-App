@@ -3,7 +3,7 @@ import Avatar from "components/ui/Avatar/Avatar";
 import Box from "components/ui/Box/Box";
 import Button from "components/ui/Button/Button";
 import Text from "components/ui/Text/Text";
-import { Table, Tbody, Td, Tr, InboxText } from "./Inbox.styled";
+import { InboxText, InboxList } from "./Inbox.styled";
 import { IPost } from "utils/types";
 import {
   collection,
@@ -17,6 +17,7 @@ import db from "../../firebase";
 import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { sortByDate, sortMentionsToTop } from "../../utils/helpers";
+import Flex from "components/ui/Flex/Flex";
 
 export default function Inbox() {
   const [inbox, setInbox] = useState<IPost[]>([]);
@@ -103,89 +104,89 @@ export default function Inbox() {
             You have reached Inbox 0 🎉
           </Text>
         )}
-        <Table as="table">
-          <Tbody>
-            {sortedInbox.map((post) => {
-              const {
-                id,
-                authorImage,
-                authorName,
-                channelName,
-                text,
-                mentions,
-                createdAt,
-              } = post;
-              return (
-                <Tr onClick={() => openInboxPost(post)} key={id}>
-                  <Td className="author">
-                    <Box css={{ display: "flex" }}>
-                      <Avatar css={{ marginRight: "1rem" }} src={authorImage} />
-                      <Box>
-                        <Text
-                          fontSize="md"
-                          fontWeight="bold"
-                          css={{ marginRight: 8, marginBottom: 4 }}
-                        >
-                          {authorName}
-                        </Text>
-                        <Text fontSize="xs">
-                          at {new Date(createdAt?.toDate()).toLocaleString()}
-                        </Text>
-                      </Box>
-                    </Box>
-                  </Td>
-                  <Td>
-                    <Box>
-                      <Text
-                        fontSize="xs"
-                        fontWeight="bold"
-                        css={{
-                          color: "$gray9",
-                          textTransform: "uppercase",
-                          marginBottom: 4,
-                        }}
-                      >
-                        {channelName}
-                      </Text>
-                      <InboxText
-                        dangerouslySetInnerHTML={{
-                          __html: `<div>${text}</div>`,
-                        }}
-                      />
-                    </Box>
-                  </Td>
-                  <Td className="actions">
+
+        <InboxList>
+          {sortedInbox.map((post) => {
+            const {
+              id,
+              authorImage,
+              authorName,
+              channelName,
+              text,
+              mentions,
+              createdAt,
+            } = post;
+            return (
+              <Flex
+                justifyBetween
+                css={{ padding: "0.5rem 2rem", cursor: "pointer" }}
+                onClick={() => openInboxPost(post)}
+                key={id}
+              >
+                <Flex css={{ width: "100%", maxWidth: "14rem" }}>
+                  <Avatar css={{ marginRight: "1rem" }} src={authorImage} />
+                  <Box>
+                    <Text
+                      fontSize="md"
+                      fontWeight="bold"
+                      css={{ marginRight: 8, marginBottom: 4 }}
+                    >
+                      {authorName}
+                    </Text>
+                    <Text fontSize="xs">
+                      at {new Date(createdAt?.toDate()).toLocaleString()}
+                    </Text>
+                  </Box>
+                </Flex>
+                <Box css={{ width: "100%", maxWidth: "calc(100% - 31rem)" }}>
+                  <Text
+                    fontSize="xs"
+                    fontWeight="bold"
+                    css={{
+                      color: "$gray9",
+                      textTransform: "uppercase",
+                      marginBottom: 4,
+                    }}
+                  >
+                    {channelName}
+                  </Text>
+                  <InboxText
+                    dangerouslySetInnerHTML={{
+                      __html: `<div>${text}</div>`,
+                    }}
+                  />
+                </Box>
+                <Flex alignCenter css={{ width: "100%", maxWidth: "16rem" }}>
+                  <Button
+                    variant="bordered"
+                    css={{
+                      padding: "0.25rem 0.5rem",
+                      backgroundColor: "$gray3",
+                      fontSize: "small",
+                    }}
+                    onClick={(event) => triagePost(event, post)}
+                  >
+                    Mark as done
+                  </Button>
+                  {mentions.includes(auth.currentUser!.uid) && (
                     <Button
-                      variant="bordered"
                       css={{
                         padding: "0.25rem 0.5rem",
-                        backgroundColor: "$gray3",
+                        backgroundColor: "$red9",
                         fontSize: "small",
+                        color: "white",
+                        marginLeft: 8,
                       }}
                       onClick={(event) => triagePost(event, post)}
                     >
-                      Mark as done
+                      Response Requested
                     </Button>
-                    {mentions.includes(auth.currentUser!.uid) && (
-                      <Button
-                        css={{
-                          padding: "0.25rem 0.5rem",
-                          backgroundColor: "$red9",
-                          fontSize: "small",
-                          color: "white",
-                          marginLeft: 8,
-                        }}
-                        onClick={(event) => triagePost(event, post)}
-                      >
-                        Response Requested
-                      </Button>
-                    )}
-                  </Td>
-                </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
+                  )}
+                </Flex>
+              </Flex>
+            );
+          })}
+        </InboxList>
       </Box>
     </Box>
   );

@@ -48,7 +48,7 @@ export default function ChannelsList() {
             <Text
               css={{
                 cursor: "pointer",
-                marginBottom: 8,
+                marginBottom: 12,
                 "&:hover": { fontWeight: "bold" },
               }}
             >

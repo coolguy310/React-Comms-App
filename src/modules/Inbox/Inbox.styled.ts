@@ -9,33 +9,10 @@ export const Wrapper = styled("div", {
   minHeight: "100vh",
 });
 
-export const Table = styled("table", {
-  width: "100%",
-  whiteSpace: "nowrap",
-  tableLayout: "fixed",
-});
-
-export const Tbody = styled("tbody", {});
-
-export const Tr = styled("tr", {
-  "&:nth-child(even)": {
+export const InboxList = styled("div", {
+  "& > div:nth-child(even)": {
     backgroundColor: "$gray2",
   },
-});
-
-export const Td = styled("td", {
-  "&.author": {
-    width: "16rem",
-    paddingLeft: "3rem",
-  },
-
-  "&.actions": {
-    width: "20rem",
-  },
-
-  cursor: "pointer",
-  textAlign: "left",
-  padding: 8,
 });
 
 export const InboxText = styled(Text, {

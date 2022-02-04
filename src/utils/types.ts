@@ -18,5 +18,6 @@ export interface IPost {
   isFirstPost?: boolean;
   id: string;
   triageId: string;
+  mentions: string[];
   createdAt: Timestamp;
 }

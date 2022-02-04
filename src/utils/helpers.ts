@@ -12,3 +12,9 @@ export const sortByDate = (
     (a: any, b: any) => a.createdAt.toDate() - b.createdAt.toDate()
   );
 };
+
+export const sortMentionsToTop = (collection: any[], userId: string) => {
+  return collection.sort((a: any, b: any) =>
+    a.mentions.includes(userId) ? -1 : 1
+  );
+};

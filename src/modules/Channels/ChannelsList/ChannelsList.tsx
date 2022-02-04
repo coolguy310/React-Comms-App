@@ -42,7 +42,7 @@ export default function ChannelsList() {
 
         <CreateChannelModal />
       </Box>
-      <Box css={{ marginTop: 8, fontSize: "large" }}>
+      <Box css={{ marginTop: 12, fontSize: "large" }}>
         {sortedChannels.map(({ id, name }) => (
           <Link key={id} to={`/${id}`}>
             <Text

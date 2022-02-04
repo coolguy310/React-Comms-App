@@ -1,2 +1,2 @@
-sort by createdAt time
-Route to specific post from inbox
+Show avatar in post mention
+Show inbox count badge on sidebar

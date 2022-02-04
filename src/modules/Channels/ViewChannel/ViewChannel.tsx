@@ -1,33 +1,26 @@
 import React, { useEffect, useState } from "react";
+import Avatar from "components/ui/Avatar/Avatar";
+import Box from "components/ui/Box/Box";
+import Text from "components/ui/Text/Text";
 import {
-  addDoc,
   collection,
   doc,
-  Firestore,
   getDoc,
   onSnapshot,
   query,
   where,
 } from "firebase/firestore";
 import { useParams } from "react-router-dom";
-import Textarea from "components/forms/Textarea/Textarea";
-import db from "../../../firebase";
-import { IChannel, IPost } from "utils/types";
-import { getAuth } from "firebase/auth";
-import Text from "components/ui/Text/Text";
-import Box from "components/ui/Box/Box";
-import Avatar from "components/ui/Avatar/Avatar";
-import Button from "components/ui/Button/Button";
-import { nanoid } from "nanoid";
 import { sortByDate } from "utils/helpers";
+import { IChannel, IPost } from "utils/types";
+import db from "../../../firebase";
+import NewPost from "./components/NewPost/NewPost";
 
 export default function ViewChannel() {
   const [channel, setChannel] = useState<Partial<IChannel> | null>(null);
   const [channelPosts, setChannelPosts] = useState<IPost[]>([]);
-  const [newPostText, setNewPostText] = useState<string>("");
 
   const params = useParams();
-  const auth = getAuth();
 
   useEffect(() => {
     // Clear channel states when switching between channel routes
@@ -64,34 +57,8 @@ export default function ViewChannel() {
     return unsub;
   }, [params.id]);
 
-  const submitReply = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!newPostText.trim()) return; // Text can not be empty
-
-    setNewPostText(""); // Reset text
-
-    // Add to firebase posts collection
-    await addDoc(collection(db as Firestore, "posts"), {
-      text: newPostText,
-      authorId: auth.currentUser!.uid,
-      authorEmail: auth.currentUser!.email,
-      authorImage: auth.currentUser!.photoURL,
-      authorName: auth.currentUser!.displayName,
-      isFirstPost: !channelPosts.length,
-      channelId: params.id,
-      triageId: nanoid(),
-      channelName: channel?.name,
-      createdAt: new Date(),
-    });
-  };
-
   const firstPost = channelPosts.find(({ isFirstPost }) => isFirstPost);
   const postReplies = channelPosts.filter(({ isFirstPost }) => !isFirstPost);
-
-  let placeholderText = "Write a comment and hit enter to send";
-
-  if (!firstPost)
-    placeholderText = "Write the first post and hit enter to send";
 
   const sortedReplies = sortByDate(postReplies);
 
@@ -118,7 +85,12 @@ export default function ViewChannel() {
                 at {new Date(firstPost.createdAt.toDate()).toLocaleString()}
               </Text>
             </Box>
-            <Text>{firstPost.text}</Text>
+            <Text
+              css={{ marginTop: 8 }}
+              dangerouslySetInnerHTML={{
+                __html: `<div>${firstPost.text}</div>`,
+              }}
+            />
           </div>
         </Box>
       )}
@@ -148,47 +120,18 @@ export default function ViewChannel() {
                       at {new Date(createdAt.toDate()).toLocaleString()}
                     </Text>
                   </Box>
-                  <Text fontSize="sm">{text}</Text>
+                  <Text
+                    css={{ marginTop: 3 }}
+                    fontSize="sm"
+                    dangerouslySetInnerHTML={{ __html: `<div>${text}</div>` }}
+                  />
                 </Box>
               </Box>
             </div>
           )
         )}
 
-        <Box
-          as="form"
-          css={{ padding: "0.75rem 0.5rem", display: "flex" }}
-          onSubmit={submitReply}
-        >
-          <Avatar
-            src={auth.currentUser!.photoURL as string}
-            css={{
-              marginRight: "1rem",
-            }}
-          />
-
-          <Box css={{ width: "100%" }}>
-            <Textarea
-              required
-              value={newPostText}
-              onChange={(event) => setNewPostText(event.target.value)}
-              placeholder={placeholderText}
-            />
-            <Box css={{ display: "flex", justifyContent: "flex-end" }}>
-              <Button
-                type="submit"
-                variant="bordered"
-                css={{
-                  width: "12rem",
-                  padding: "0.5rem 1rem",
-                  backgroundColor: "$gray6",
-                }}
-              >
-                Submit
-              </Button>
-            </Box>
-          </Box>
-        </Box>
+        <NewPost isFirstPost={!firstPost} channelName={channel.name!} />
       </Box>
     </Box>
   );

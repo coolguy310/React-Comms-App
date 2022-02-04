@@ -30,7 +30,7 @@ export const Td = styled("td", {
   },
 
   "&.actions": {
-    width: "16rem",
+    width: "20rem",
   },
 
   cursor: "pointer",

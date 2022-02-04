@@ -16,7 +16,7 @@ import {
 import db from "../../firebase";
 import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { sortByDate } from "../../utils/helpers";
+import { sortByDate, sortMentionsToTop } from "../../utils/helpers";
 
 export default function Inbox() {
   const [inbox, setInbox] = useState<IPost[]>([]);
@@ -86,7 +86,9 @@ export default function Inbox() {
     navigate(`/${post.channelId}`);
   };
 
-  const sortedInbox = sortByDate(inbox); // Sort by date in ascending order
+  let sortedInbox = sortByDate(inbox); // Sort by date in ascending order
+
+  sortedInbox = sortMentionsToTop(sortedInbox, auth.currentUser!.uid); // Sort to show mentions on top
 
   return (
     <Box css={{ paddingTop: 8 }}>
@@ -110,6 +112,7 @@ export default function Inbox() {
                 authorName,
                 channelName,
                 text,
+                mentions,
                 createdAt,
               } = post;
               return (
@@ -121,7 +124,7 @@ export default function Inbox() {
                         <Text
                           fontSize="md"
                           fontWeight="bold"
-                          css={{ marginRight: 8 }}
+                          css={{ marginRight: 8, marginBottom: 4 }}
                         >
                           {authorName}
                         </Text>
@@ -139,11 +142,16 @@ export default function Inbox() {
                         css={{
                           color: "$gray9",
                           textTransform: "uppercase",
+                          marginBottom: 4,
                         }}
                       >
                         {channelName}
                       </Text>
-                      <InboxText>{text}</InboxText>
+                      <InboxText
+                        dangerouslySetInnerHTML={{
+                          __html: `<div>${text}</div>`,
+                        }}
+                      />
                     </Box>
                   </Td>
                   <Td className="actions">
@@ -158,6 +166,20 @@ export default function Inbox() {
                     >
                       Mark as done
                     </Button>
+                    {mentions.includes(auth.currentUser!.uid) && (
+                      <Button
+                        css={{
+                          padding: "0.25rem 0.5rem",
+                          backgroundColor: "$red9",
+                          fontSize: "small",
+                          color: "white",
+                          marginLeft: 8,
+                        }}
+                        onClick={(event) => triagePost(event, post)}
+                      >
+                        Response Requested
+                      </Button>
+                    )}
                   </Td>
                 </Tr>
               );

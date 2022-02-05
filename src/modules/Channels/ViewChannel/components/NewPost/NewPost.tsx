@@ -65,10 +65,9 @@ export default function NewPost({ isFirstPost, channelName }: NewPostProps) {
     );
   };
 
-  let placeholderText = "Write a comment and hit enter to send";
+  let placeholderText = "Write a comment here";
 
-  if (isFirstPost)
-    placeholderText = "Write the first post and hit enter to send";
+  if (isFirstPost) placeholderText = "Write the first post here";
 
   const userSuggestions: SuggestionDataItem[] = users.map(({ uid, name }) => ({
     id: uid,

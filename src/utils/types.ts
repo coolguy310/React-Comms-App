@@ -7,6 +7,7 @@ export interface IUser {
   email: string;
   photoURL: string;
   phoneNumber: string;
+  notifyPreferences?: { [channelId: string]: boolean };
 }
 
 export interface IChannel {

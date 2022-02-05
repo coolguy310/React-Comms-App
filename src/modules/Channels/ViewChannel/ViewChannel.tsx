@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import Avatar from "components/ui/Avatar/Avatar";
 import Box from "components/ui/Box/Box";
 import Text from "components/ui/Text/Text";
-import { collection, doc, getDoc, onSnapshot, query } from "firebase/firestore";
+import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { useParams } from "react-router-dom";
 import { sortByDate } from "utils/helpers";
 import { IChannel, IPost } from "utils/types";
 import db from "../../../firebase";
 import NewPost from "./components/NewPost/NewPost";
+import Flex from "components/ui/Flex/Flex";
+import NotificationsSettings from "./components/NotificationsSettings";
 
 export default function ViewChannel() {
   const [channel, setChannel] = useState<Partial<IChannel> | null>(null);
@@ -36,7 +38,7 @@ export default function ViewChannel() {
   useEffect(() => {
     // Fetch all posts of the channel
     const unsub = onSnapshot(
-      query(collection(db, "channels", params.id!, "posts")),
+      collection(db, "channels", params.id!, "posts"),
       (snapshot) => {
         setChannelPosts(snapshot.docs.map((doc) => doc.data() as IPost));
       }
@@ -56,9 +58,17 @@ export default function ViewChannel() {
 
   return (
     <Box css={{ paddingTop: 8 }}>
-      <Text as="h1" fontWeight="bold" css={{ padding: "0 3rem", fontSize: 36 }}>
-        {channel.name}
-      </Text>
+      <Flex justifyBetween alignCenter css={{ paddingRight: "6rem" }}>
+        <Text
+          as="h1"
+          fontWeight="bold"
+          css={{ padding: "0 3rem", fontSize: 36 }}
+        >
+          {channel.name}
+        </Text>
+
+        <NotificationsSettings channel={channel as IChannel} />
+      </Flex>
       <Box as="hr" css={{ marginTop: "2rem", marginBottom: "1rem" }} />
       {firstPost && (
         <Box css={{ display: "flex", padding: "0.75rem 3rem" }}>

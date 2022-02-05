@@ -3,12 +3,13 @@ import Modal from "components/ui/Modal/Modal";
 import React, { useState } from "react";
 import { IoAdd } from "react-icons/io5";
 import db from "../../../firebase";
-import { Firestore, collection, addDoc } from "firebase/firestore";
+import { Firestore, setDoc, doc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import Box from "components/ui/Box/Box";
 import Text from "components/ui/Text/Text";
 import Button from "components/ui/Button/Button";
 import { getAuth } from "firebase/auth";
+import { nanoid } from "nanoid";
 
 export default function CreateChannelModal() {
   const [channelName, setChannelName] = useState("");
@@ -22,15 +23,18 @@ export default function CreateChannelModal() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // Add to channel collection
-    const data = await addDoc(collection(db as Firestore, "channels"), {
+    const payload = {
+      id: nanoid(),
       creatorId: auth!.currentUser?.uid,
       name: channelName,
       createdAt: new Date(),
-    });
+    };
+
+    // Add to channel collection
+    await setDoc(doc(db as Firestore, "channels", payload.id), payload);
 
     // Then route to the newly created channel
-    navigate(`/${data.id}`);
+    navigate(`/${payload.id}`);
 
     // Close modal and reset channel name
     onClose();

@@ -67,6 +67,12 @@ code {
   padding: 1px 4px;
 }
 
+.post-request-response {
+  background-color: pink;
+  border-radius: 12px;
+  padding: 1px 4px;
+}
+
 /* .mentions {
 } */
 
@@ -117,5 +123,10 @@ code {
 
 .mentions__mention {
   background-color: lightgray;
+  border-radius: 12px;
+}
+
+.mentions__request-response {
+  background-color: pink;
   border-radius: 12px;
 }

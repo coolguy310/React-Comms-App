@@ -105,6 +105,12 @@ export default function NewPost({ isFirstPost, channelName }: NewPostProps) {
             data={userSuggestions}
             className="mentions__mention"
           />
+          <Mention
+            trigger="@@"
+            markup="<span id='__id__' class='post-request-response'>@@__display__</span>"
+            data={userSuggestions}
+            className="mentions__request-response"
+          />
         </MentionsInput>
 
         <Box

@@ -77,7 +77,6 @@ export default function Inbox() {
               authorName,
               channelName,
               text,
-              mentions,
               createdAt,
             } = post;
             return (
@@ -132,7 +131,8 @@ export default function Inbox() {
                   >
                     Mark as done
                   </Button>
-                  {mentions.includes(auth.currentUser!.uid) && (
+                  {text.includes(`@@${auth.currentUser!.displayName}`) && (
+                    // If text contains an @@ with the logged in user, display the response requested badge
                     <Button
                       css={{
                         padding: "0.25rem 0.5rem",

@@ -22,9 +22,9 @@ const addToInbox = (user, post) => {
     .set(post)
     .then((doc) => {
       functions.logger.info(
-        "Post added to inbox successfully!, user id => ",
+        "Post added to inbox successfully!, userId => ",
         user.uid,
-        "post id => ",
+        "postId => ",
         post.id
       );
     });

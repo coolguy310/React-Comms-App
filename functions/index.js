@@ -4,15 +4,14 @@ admin.initializeApp(functions.config().firebase);
 
 const db = admin.firestore();
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
+// Create and Deploy Your First Cloud Functions
+// https://firebase.google.com/docs/functions/write-firebase-functions
 exports.helloWorld = functions.https.onRequest((request, response) => {
   functions.logger.info("Hello logs!", { structuredData: true });
   response.send("Hello from Firebase!");
 });
 
-// Fetch all other users except the current user
+// Fetch all other users except the current user (you don't want to see notifications of your own posts)
 const getOtherUsers = async (currentUserId) =>
   await db.collection("users").where("uid", "!=", currentUserId).get();
 
@@ -22,7 +21,12 @@ const addToInbox = (user, post) => {
     .doc(post.id)
     .set(post)
     .then((doc) => {
-      functions.logger.info("Post added to inbox successfully!");
+      functions.logger.info(
+        "Post added to inbox successfully!, user id => ",
+        user.uid,
+        "post id => ",
+        post.id
+      );
     });
 };
 

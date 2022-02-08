@@ -44,7 +44,7 @@ export const LinkItem = styled("div", {
   alignItems: "center",
   justifyContent: "space-between",
   cursor: "pointer",
-  marginTop: "3rem",
+  marginTop: "4rem",
   p: {
     marginRight: "1.5rem",
   },

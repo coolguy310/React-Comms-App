@@ -9,10 +9,13 @@ export const Wrapper = styled("div", {
   minHeight: "100vh",
 });
 
-export const InboxList = styled("div", {
-  "& > div:nth-child(even)": {
-    backgroundColor: "$gray2",
-  },
+export const InboxItem = styled("div", {
+  display: "flex",
+  justifyContent: "space-between",
+  padding: "0.5rem 2rem",
+  cursor: "pointer",
+  borderBottom: "1px solid",
+  borderBottomColor: "$gray4",
 });
 
 export const InboxText = styled(Text, {

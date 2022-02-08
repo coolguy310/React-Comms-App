@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Link, Navigate, Outlet, useLocation } from "react-router-dom";
+import {
+  Link,
+  Navigate,
+  Outlet,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 import { getAuth } from "firebase/auth";
 // import Badge from "components/ui/Badge/Badge";
-import logo from "logo.svg";
+import { KBarProvider } from "kbar";
+import { Spotlight } from "components/ui/Spotlight";
+import { defaultHotkeys } from "utils/Hotkeys/defaultHotkeys";
 import ChannelsList from "modules/Channels/ChannelsList/ChannelsList";
 import {
   LinkItem,
@@ -14,6 +22,8 @@ import {
   SidebarWrapper,
 } from "./AuthLayout.styled";
 import Text from "components/ui/Text/Text";
+import Flex from "components/ui/Flex/Flex";
+import Box from "components/ui/Box/Box";
 
 export default function AuthLayout() {
   const auth = getAuth();
@@ -21,6 +31,9 @@ export default function AuthLayout() {
   const [user, setUser] = useState(() => auth.currentUser);
 
   let location = useLocation();
+  const navigate = useNavigate();
+
+  const onClickLink = (path: string) => navigate(path);
 
   useEffect(() => {
     // Listen for auth state changes
@@ -57,29 +70,43 @@ export default function AuthLayout() {
   }
 
   return (
-    <PageContainer>
-      <SidebarWrapper>
-        <SidebarContent>
-          <div>
-            <img src={logo} alt="logo" />
-            <Link to="/">
-              <LinkItem>
-                <Text fontSize="lg">Inbox</Text>
-                {/* <Badge>4</Badge> */}
-              </LinkItem>
-            </Link>
+    <KBarProvider actions={defaultHotkeys({ onClickLink })}>
+      <Spotlight onClickLink={onClickLink} />
 
-            <ChannelsList />
-          </div>
+      <PageContainer>
+        <SidebarWrapper>
+          <SidebarContent>
+            <div>
+              <Flex alignCenter>
+                <Box
+                  as="img"
+                  css={{ width: 40, marginRight: 16 }}
+                  src="https://notion-emojis.s3-us-west-2.amazonaws.com/prod/svg-twitter/1f6f0-fe0f.svg"
+                  alt="logo"
+                />
+                <Text as="h1" fontWeight="bold" fontSize="xl">
+                  Comms
+                </Text>
+              </Flex>
+              <Link to="/">
+                <LinkItem>
+                  <Text fontSize="lg">Inbox</Text>
+                  {/* <Badge>4</Badge> */}
+                </LinkItem>
+              </Link>
 
-          <LogoutButton onClick={signOut}>
-            <BiLogOut /> Logout
-          </LogoutButton>
-        </SidebarContent>
-      </SidebarWrapper>
-      <MainContent>
-        <Outlet />
-      </MainContent>
-    </PageContainer>
+              <ChannelsList />
+            </div>
+
+            <LogoutButton onClick={signOut}>
+              <BiLogOut /> Logout
+            </LogoutButton>
+          </SidebarContent>
+        </SidebarWrapper>
+        <MainContent>
+          <Outlet />
+        </MainContent>
+      </PageContainer>
+    </KBarProvider>
   );
 }

@@ -3,7 +3,7 @@ import Avatar from "components/ui/Avatar/Avatar";
 import Box from "components/ui/Box/Box";
 import Button from "components/ui/Button/Button";
 import Text from "components/ui/Text/Text";
-import { InboxText, InboxList } from "./Inbox.styled";
+import { InboxText, InboxItem } from "./Inbox.styled";
 import { IPost } from "utils/types";
 import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
 import db from "../../firebase";
@@ -60,6 +60,7 @@ export default function Inbox() {
       <Text as="h1" fontWeight="bold" css={{ padding: "0 3rem", fontSize: 36 }}>
         Inbox
       </Text>
+
       <Box as="hr" css={{ marginTop: "2rem" }} />
 
       <Box>
@@ -69,87 +70,75 @@ export default function Inbox() {
           </Text>
         )}
 
-        <InboxList>
-          {sortedInbox.map((post) => {
-            const {
-              id,
-              authorImage,
-              authorName,
-              channelName,
-              text,
-              createdAt,
-            } = post;
-            return (
-              <Flex
-                justifyBetween
-                css={{ padding: "0.5rem 2rem", cursor: "pointer" }}
-                onClick={() => openInboxPost(post)}
-                key={id}
-              >
-                <Flex css={{ width: "100%", maxWidth: "14rem" }}>
-                  <Avatar css={{ marginRight: "1rem" }} src={authorImage} />
-                  <Box>
-                    <Text
-                      fontSize="md"
-                      fontWeight="bold"
-                      css={{ marginRight: 8, marginBottom: 4 }}
-                    >
-                      {authorName}
-                    </Text>
-                    <Text fontSize="xs">
-                      at {new Date(createdAt?.toDate()).toLocaleString()}
-                    </Text>
-                  </Box>
-                </Flex>
-                <Box css={{ width: "100%", maxWidth: "calc(100% - 31rem)" }}>
+        {sortedInbox.map((post) => {
+          const { id, authorImage, authorName, channelName, text, createdAt } =
+            post;
+          return (
+            <InboxItem onClick={() => openInboxPost(post)} key={id}>
+              <Flex css={{ width: "100%", maxWidth: "14rem" }}>
+                <Avatar css={{ marginRight: "1rem" }} src={authorImage} />
+                <Box>
                   <Text
-                    fontSize="xs"
+                    fontSize="md"
                     fontWeight="bold"
-                    css={{
-                      color: "$gray9",
-                      textTransform: "uppercase",
-                      marginBottom: 4,
-                    }}
+                    css={{ marginRight: 8, marginBottom: 4 }}
                   >
-                    {channelName}
+                    {authorName}
                   </Text>
-                  <InboxText
-                    dangerouslySetInnerHTML={{
-                      __html: `<div>${text}</div>`,
-                    }}
-                  />
+                  <Text fontSize="xs">
+                    at {new Date(createdAt?.toDate()).toLocaleString()}
+                  </Text>
                 </Box>
-                <Flex alignEnd css={{ width: "100%", maxWidth: "16rem" }}>
-                  <Button
-                    variant="bordered"
-                    css={{
-                      padding: "0.25rem 0.5rem",
-                      backgroundColor: "$gray3",
-                      fontSize: "small",
-                    }}
-                    onClick={(event) => markAsDone(event, post)}
-                  >
-                    Mark as done
-                  </Button>
-                  {text.includes(`@@${auth.currentUser!.displayName}`) && (
-                    // If text contains an @@ with the logged in user, display the response requested badge
-                    <Button
-                      css={{
-                        padding: "0.25rem 0.5rem",
-                        backgroundColor: "$red9",
-                        fontSize: "small",
-                        color: "white",
-                        marginLeft: 8,
-                      }}
-                    >
-                      Response Requested
-                    </Button>
-                  )}
-                </Flex>
               </Flex>
-            );
-          })}
-        </InboxList>
+              <Box css={{ width: "100%", maxWidth: "calc(100% - 35rem)" }}>
+                <Text
+                  fontSize="xs"
+                  fontWeight="bold"
+                  css={{
+                    color: "$gray9",
+                    textTransform: "uppercase",
+                    marginBottom: 4,
+                  }}
+                >
+                  {channelName}
+                </Text>
+                <InboxText
+                  dangerouslySetInnerHTML={{
+                    __html: `<div>${text}</div>`,
+                  }}
+                />
+              </Box>
+              <Flex alignEnd css={{ width: "100%", maxWidth: "20rem" }}>
+                <Button
+                  variant="bordered"
+                  css={{
+                    padding: "0.25rem 0.5rem",
+                    backgroundColor: "$gray3",
+                    fontSize: "small",
+                  }}
+                  onClick={(event) => markAsDone(event, post)}
+                >
+                  Mark as done
+                </Button>
+                {text.includes(`@@${auth.currentUser!.displayName}`) && (
+                  // If text contains an @@ with the name of the logged in user, display the response requested badge
+                  <Button
+                    css={{
+                      padding: "0.55rem 0.5rem",
+                      width: 200,
+                      backgroundColor: "$red11",
+                      fontSize: "small",
+                      color: "white",
+                      marginLeft: 8,
+                    }}
+                  >
+                    Response Requested
+                  </Button>
+                )}
+              </Flex>
+            </InboxItem>
+          );
+        })}
       </Box>
     </Box>
   );

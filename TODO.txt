@@ -1,3 +1,5 @@
 Show avatar in post mention
 Show inbox count badge on sidebar
 Show user profile Avarar and name on sidebar
+Setup contextApi
+"responses and comments to something I’m involved in"

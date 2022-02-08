@@ -3,6 +3,9 @@ import { styled } from "stitches.config";
 const Text = styled("p", {
   variants: {
     fontSize: {
+      xl: {
+        fontSize: "x-large",
+      },
       md: {
         fontSize: "medium",
       },

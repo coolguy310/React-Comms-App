@@ -1,20 +1,22 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import db from "../../../firebase";
 import { onSnapshot, collection } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { IChannel } from "utils/types";
 import CreateChannelModal from "../CreateChannel/CreateChannelModal";
 import Box from "components/ui/Box/Box";
 import Text from "components/ui/Text/Text";
 import { sortByDate } from "utils/helpers";
+import { useAppContext } from "utils/Context/Context";
 
 export default function ChannelsList() {
-  const [channelList, setChannelList] = useState<IChannel[]>([]);
+  const { channels, setChannels } = useAppContext();
 
   useEffect(() => {
     // Fetch channels
     const unsub = onSnapshot(collection(db, "channels"), (snapshot) => {
-      setChannelList(
+      setChannels(
         snapshot.docs.map((doc) => ({
           ...(doc.data() as Omit<IChannel, "id">),
           id: doc.id,
@@ -25,7 +27,7 @@ export default function ChannelsList() {
     return unsub;
   }, []);
 
-  const sortedChannels = sortByDate(channelList);
+  const sortedChannels = sortByDate(channels);
 
   return (
     <Box css={{ marginTop: "5rem" }}>

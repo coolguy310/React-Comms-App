@@ -1,4 +1,4 @@
-import { styled, theme } from "stitches.config";
+import { styled } from "stitches.config";
 
 export const BadgeWrapper = styled("div", {
   display: "flex",
@@ -7,6 +7,6 @@ export const BadgeWrapper = styled("div", {
   width: 24,
   height: 24,
   borderRadius: 6,
-  backgroundColor: theme.colors.primary,
+  backgroundColor: "$red11",
   color: "White",
 });

@@ -1,18 +1,14 @@
-import React, { useEffect, useState } from "react";
-import {
-  Link,
-  Navigate,
-  Outlet,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
-import { BiLogOut } from "react-icons/bi";
-import { getAuth } from "firebase/auth";
-// import Badge from "components/ui/Badge/Badge";
-import { KBarProvider } from "kbar";
+import React from "react";
+import Badge from "components/ui/Badge/Badge";
+import Box from "components/ui/Box/Box";
+import Flex from "components/ui/Flex/Flex";
 import { Spotlight } from "components/ui/Spotlight";
-import { defaultHotkeys } from "utils/Hotkeys/defaultHotkeys";
+import Text from "components/ui/Text/Text";
+import { KBarProvider } from "kbar";
 import ChannelsList from "modules/Channels/ChannelsList/ChannelsList";
+import { BiLogOut } from "react-icons/bi";
+import { Link, Navigate, Outlet } from "react-router-dom";
+import { defaultHotkeys } from "utils/Hotkeys/defaultHotkeys";
 import {
   LinkItem,
   LogoutButton,
@@ -21,45 +17,18 @@ import {
   SidebarContent,
   SidebarWrapper,
 } from "./AuthLayout.styled";
-import Text from "components/ui/Text/Text";
-import Flex from "components/ui/Flex/Flex";
-import Box from "components/ui/Box/Box";
+import useAuthLayoutHook from "./useAuthLayoutHook";
 
 export default function AuthLayout() {
-  const auth = getAuth();
-  const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState(() => auth.currentUser);
+  const { initializing, user, location, onClickLink, inbox, signOut } =
+    useAuthLayoutHook();
 
-  let location = useLocation();
-  const navigate = useNavigate();
-
-  const onClickLink = (path: string) => navigate(path);
-
-  useEffect(() => {
-    // Listen for auth state changes
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-      if (initializing) {
-        setInitializing(false);
-      }
-    });
-    // Cleanup subscription
-    return unsubscribe;
-  }, [initializing, auth]);
-
-  const signOut = async () => {
-    try {
-      await auth.signOut();
-    } catch (error: any) {
-      console.log(error.message);
-    }
-  };
-
-  if (initializing) return <p style={{ textAlign: "center" }}>Loading...</p>;
+  if (initializing)
+    return (
+      <Flex alignCenter justifyCenter css={{ minHeight: "100vh" }}>
+        Loading...
+      </Flex>
+    );
 
   if (!user) {
     // Redirect them to the /login page, but save the current location they were
@@ -91,7 +60,7 @@ export default function AuthLayout() {
               <Link to="/">
                 <LinkItem>
                   <Text fontSize="lg">Inbox</Text>
-                  {/* <Badge>4</Badge> */}
+                  {inbox && inbox.length > 0 && <Badge>{inbox?.length}</Badge>}
                 </LinkItem>
               </Link>
 

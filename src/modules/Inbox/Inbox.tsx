@@ -1,40 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Avatar from "components/ui/Avatar/Avatar";
 import Box from "components/ui/Box/Box";
 import Button from "components/ui/Button/Button";
 import Text from "components/ui/Text/Text";
 import { InboxText, InboxItem } from "./Inbox.styled";
 import { IPost } from "utils/types";
-import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
+import { deleteDoc, doc } from "firebase/firestore";
 import db from "../../firebase";
 import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { sortByDate, sortMentionsToTop } from "../../utils/helpers";
 import Flex from "components/ui/Flex/Flex";
+import { useAppContext } from "utils/Context/Context";
 
 export default function Inbox() {
-  const [inbox, setInbox] = useState<IPost[]>([]);
-  const [isEmpty, setIsEmpty] = useState<boolean>(false);
+  const { inbox } = useAppContext();
 
   const auth = getAuth();
   let navigate = useNavigate();
-
-  useEffect(() => {
-    // fetch inbox by user uid
-    const unsub = onSnapshot(
-      collection(db, "users", auth.currentUser!.uid, "inbox"),
-      ({ docs }) => {
-        setIsEmpty(!docs.length);
-        setInbox(
-          docs.map((doc) => ({
-            ...(doc.data() as IPost),
-          }))
-        );
-      }
-    );
-
-    return unsub;
-  }, [auth.currentUser]);
 
   const markAsDone = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -51,6 +34,8 @@ export default function Inbox() {
     navigate(`/${post.channelId}`);
   };
 
+  if (!inbox) return null;
+
   let sortedInbox = sortByDate(inbox); // Sort by date in ascending order
 
   sortedInbox = sortMentionsToTop(sortedInbox, auth.currentUser!.uid); // Sort to show mentions on top
@@ -64,7 +49,7 @@ export default function Inbox() {
       <Box as="hr" css={{ marginTop: "2rem" }} />
 
       <Box>
-        {isEmpty && (
+        {!inbox?.length && (
           <Text css={{ textAlign: "center", marginTop: 20 }}>
             You have reached Inbox 0 🎉
           </Text>

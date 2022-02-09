@@ -11,6 +11,7 @@ import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import db from "../../../../firebase";
 import { getAuth } from "firebase/auth";
 import { IChannel, IUser } from "utils/types";
+import { useRegisterActions } from "kbar";
 
 interface NotificationsSettingsProps {
   channel: IChannel;
@@ -57,6 +58,29 @@ export default function NotificationsSettings({
 
     setIsOpen(false); // Close popover menu
   };
+
+  // Register hotkeys for notification change triggers
+  useRegisterActions(
+    [
+      {
+        id: "all-posts",
+        name: "Notify all posts and replies",
+        keywords: `notify all post reply`,
+        shortcut: ["a", "n"],
+        section: "Notifications",
+        perform: () => changeNotificationPreference("all"),
+      },
+      {
+        id: "only-mentioned-posts",
+        name: "Notify only posts i'm mentioned in",
+        keywords: `notify only post mentioned`,
+        shortcut: ["m", "n"],
+        section: "Notifications",
+        perform: () => changeNotificationPreference(),
+      },
+    ],
+    []
+  );
 
   const content = (
     <Box

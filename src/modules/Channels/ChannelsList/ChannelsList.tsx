@@ -9,19 +9,17 @@ import Box from "components/ui/Box/Box";
 import Text from "components/ui/Text/Text";
 import { sortByDate } from "utils/helpers";
 import { useAppContext } from "utils/Context/Context";
+import { useChannelsHotkeys } from "utils/Hotkeys/channelsHotkeys";
 
 export default function ChannelsList() {
   const { channels, setChannels } = useAppContext();
 
+  useChannelsHotkeys({ channels });
+
   useEffect(() => {
     // Fetch channels
     const unsub = onSnapshot(collection(db, "channels"), (snapshot) => {
-      setChannels(
-        snapshot.docs.map((doc) => ({
-          ...(doc.data() as Omit<IChannel, "id">),
-          id: doc.id,
-        }))
-      );
+      setChannels(snapshot.docs.map((doc) => doc.data() as IChannel));
     });
 
     return unsub;

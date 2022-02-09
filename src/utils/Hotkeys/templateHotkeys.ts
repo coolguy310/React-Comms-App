@@ -3,8 +3,9 @@ import { useMemo } from "react";
 import { useRegisterActions } from "kbar";
 
 // need to get data
+import { HotkeyActionProps } from "../types";
 
-const searchId = "search1";
+const searchId = "channels1";
 
 const entityTypes = {
   M: "ma",
@@ -12,7 +13,7 @@ const entityTypes = {
   I: "in",
 };
 
-export function useChannelsHotkeys({ onClickLink }) {
+export function useChannelsHotkeys({ onClickLink }: HotkeyActionProps) {
   const searchActions = useMemo(() => {
     const actions = [];
     actions.push({
@@ -64,5 +65,5 @@ export function useChannelsHotkeys({ onClickLink }) {
     [searchActions]
   );
 
-  useRegisterActions([rootSearchAction, ...searchActions].filter(Boolean));
+  useRegisterActions([rootSearchAction!, ...searchActions].filter(Boolean));
 }

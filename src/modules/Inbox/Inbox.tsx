@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { sortByDate, sortMentionsToTop } from "../../utils/helpers";
 import Flex from "components/ui/Flex/Flex";
 import { useAppContext } from "utils/Context/Context";
+import { useInboxHotkeys } from "utils/Hotkeys/inboxHotkeys";
 
 export default function Inbox() {
   const { inbox } = useAppContext();
@@ -33,6 +34,8 @@ export default function Inbox() {
     // Route to post's channel
     navigate(`/${post.channelId}`);
   };
+
+  useInboxHotkeys({ post: null });
 
   if (!inbox) return null;
 

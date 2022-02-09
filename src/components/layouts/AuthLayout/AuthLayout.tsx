@@ -2,7 +2,7 @@ import React from "react";
 import Badge from "components/ui/Badge/Badge";
 import Box from "components/ui/Box/Box";
 import Flex from "components/ui/Flex/Flex";
-import { Spotlight } from "components/ui/Spotlight";
+import { Spotlight } from "components/ui/Spotlight/Spotlight";
 import Text from "components/ui/Text/Text";
 import { KBarProvider } from "kbar";
 import ChannelsList from "modules/Channels/ChannelsList/ChannelsList";

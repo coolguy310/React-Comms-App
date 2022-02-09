@@ -7,7 +7,6 @@ import {
   useKBar,
 } from "kbar";
 import { SpotlightResults } from "./SpotlightResults";
-import { useChannelsHotkeys } from "../../utils/Hotkeys/channelsHotkeys";
 
 const searchStyle = {
   padding: "12px 16px",
@@ -35,6 +34,7 @@ interface SpotlightProps {
 
 export function Spotlight({ onClickLink }: SpotlightProps) {
   const { query } = useKBar();
+
   console.log("query", query);
   useEffect(() => {
     function handleSpotlightShortcut(event: any) {
@@ -51,7 +51,6 @@ export function Spotlight({ onClickLink }: SpotlightProps) {
     return () =>
       window.removeEventListener("keydown", handleSpotlightShortcut, true);
   }, [query]);
-  useChannelsHotkeys({ onClickLink });
 
   return (
     <KBarPortal>

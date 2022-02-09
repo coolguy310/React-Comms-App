@@ -15,6 +15,7 @@ import db from "../../../../../firebase";
 import { nanoid } from "nanoid";
 import { useParams } from "react-router-dom";
 import { IUser } from "utils/types";
+import { useRegisterActions } from "kbar";
 
 interface NewPostProps {
   isFirstPost: boolean;
@@ -38,8 +39,9 @@ export default function NewPost({ isFirstPost, channelName }: NewPostProps) {
     return unsub;
   }, [auth.currentUser]);
 
-  const submitReply = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const submitReply = async (event?: React.FormEvent<HTMLFormElement>) => {
+    event?.preventDefault();
+    console.log(newPostText);
     if (!newPostText.trim()) return; // Text should not be empty
 
     setNewPostText(""); // Reset text
@@ -64,6 +66,20 @@ export default function NewPost({ isFirstPost, channelName }: NewPostProps) {
       postPayload
     );
   };
+
+  // Register hotkey for submitting post
+  useRegisterActions(
+    [
+      {
+        id: "reply",
+        name: "Submit Reply",
+        keywords: `submit post reply`,
+        shortcut: ["ctrl", "enter"],
+        perform: () => submitReply(),
+      },
+    ],
+    [newPostText]
+  );
 
   let placeholderText = "Write a comment here";
 

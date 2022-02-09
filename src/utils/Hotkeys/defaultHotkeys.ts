@@ -1,29 +1,26 @@
-interface DefaultActionProps {
-  onClickLink: (path: string) => void;
-}
+import { HotkeyActionProps } from "../types";
 
-export const defaultHotkeys = ({ onClickLink }: DefaultActionProps) => {
+export const defaultHotkeys = ({ onClickLink }: HotkeyActionProps) => {
   return [
     {
       id: "inbox",
-      name: "Inbox",
+      name: "Go to Inbox",
       shortcut: ["i"],
       keywords: "inbox",
       perform: () => onClickLink("/"),
     },
-    // {
-    //   id: "contacts",
-    //   name: "Contacts",
-    //   shortcut: ["c"],
-    //   keywords: "contact",
-    //   perform: () => onClickLink("/contacts"),
-    // },
-    // {
-    //   id: "search",
-    //   name: "Search",
-    //   shortcut: ["s"],
-    //   keywords: "search",
-    //   perform: () => onClickLink("/search")
-    // }
+    {
+      id: "compose",
+      name: "Compose a new post",
+      shortcut: ["n"],
+      keywords: "compose new",
+      perform: () => onClickLink("/new"),
+    },
+    {
+      id: "open-menu",
+      name: "Open Comms commands",
+      shortcut: ["ctrl", "k"],
+      keywords: "commands list",
+    },
   ];
 };

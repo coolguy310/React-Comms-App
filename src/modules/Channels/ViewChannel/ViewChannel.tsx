@@ -1,56 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Avatar from "components/ui/Avatar/Avatar";
 import Box from "components/ui/Box/Box";
-import Text from "components/ui/Text/Text";
-import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
-import { useParams } from "react-router-dom";
-import { sortByDate } from "utils/helpers";
-import { IChannel, IPost } from "utils/types";
-import db from "../../../firebase";
-import NewPost from "./components/NewPost/NewPost";
 import Flex from "components/ui/Flex/Flex";
+import Text from "components/ui/Text/Text";
+import { IChannel } from "utils/types";
+import NewPost from "./components/NewPost/NewPost";
 import NotificationsSettings from "./components/NotificationsSettings";
+import useViewChannelHook from "./useViewChannelHook";
 
 export default function ViewChannel() {
-  const [channel, setChannel] = useState<Partial<IChannel> | null>(null);
-  const [channelPosts, setChannelPosts] = useState<IPost[]>([]);
-
-  const params = useParams();
-
-  useEffect(() => {
-    // Clear channel states when switching between channel routes
-    setChannel(null);
-  }, [params.id]);
-
-  useEffect(() => {
-    // Get channel by id
-    (async () => {
-      const snap = await getDoc(doc(db, "channels", params.id!));
-
-      if (snap.exists()) {
-        setChannel(snap.data());
-      } else {
-        setChannel(null);
-      }
-    })();
-  }, [params.id]);
-
-  useEffect(() => {
-    // Fetch all posts of the channel
-    const unsub = onSnapshot(
-      collection(db, "channels", params.id!, "posts"),
-      (snapshot) => {
-        setChannelPosts(snapshot.docs.map((doc) => doc.data() as IPost));
-      }
-    );
-
-    return unsub;
-  }, [params.id]);
-
-  const firstPost = channelPosts.find(({ isFirstPost }) => isFirstPost);
-  const postReplies = channelPosts.filter(({ isFirstPost }) => !isFirstPost);
-
-  const sortedReplies = sortByDate(postReplies);
+  const { channel, firstPost, sortedReplies } = useViewChannelHook();
 
   if (!channel) {
     return null;

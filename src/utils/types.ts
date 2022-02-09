@@ -30,3 +30,7 @@ export interface IPost {
   mentions: string[];
   createdAt: Timestamp;
 }
+
+export interface HotkeyActionProps {
+  onClickLink: (path: string) => void;
+}

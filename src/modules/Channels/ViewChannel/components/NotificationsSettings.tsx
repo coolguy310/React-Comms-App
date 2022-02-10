@@ -23,6 +23,10 @@ const notificationOptions = [
     value: "all",
   },
   {
+    name: "Only responses and comments to something I'm involved in",
+    value: "involved",
+  },
+  {
     name: "Only when i'm mentioned",
     value: undefined, // This is the default preference choice
   },
@@ -69,6 +73,14 @@ export default function NotificationsSettings({
         shortcut: ["a", "n"],
         section: "Notifications",
         perform: () => changeNotificationPreference("all"),
+      },
+      {
+        id: "involved-posts",
+        name: "Only responses and comments to something I'm involved in",
+        keywords: `notify only post involved`,
+        shortcut: ["i", "n"],
+        section: "Notifications",
+        perform: () => changeNotificationPreference("involved"),
       },
       {
         id: "only-mentioned-posts",

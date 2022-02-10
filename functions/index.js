@@ -11,6 +11,15 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
   response.send("Hello from Firebase!");
 });
 
+// Pass in the channelId to fetch all posts of the channel
+const getMentionedPostsInChannel = async (channelId, currentUserId) =>
+  (
+    await db
+      .collection(`channels/${channelId}/posts`)
+      .where("mentions", "array-contains", currentUserId)
+      .get()
+  ).docs.map((doc) => doc.data());
+
 // Fetch all other users except the current user (you don't want to see notifications of your own posts)
 const getOtherUsers = async (currentUserId) =>
   await db.collection("users").where("uid", "!=", currentUserId).get();
@@ -31,7 +40,7 @@ const addToInbox = (user, post) => {
 };
 
 // Check the notification preference for the specific channel of that post, and notify/(not notify) in inbox
-const checkNotificationPreference = (user, post) => {
+const checkNotificationPreference = async (user, post) => {
   const preferences = user.notifyPreferences || {};
 
   const channelPreference = preferences[post.channelId];
@@ -39,6 +48,21 @@ const checkNotificationPreference = (user, post) => {
   // If there is no valid channel preference, notify only if the user is mentioned in the post
   if (!channelPreference && post.mentions.includes(user.uid)) {
     return addToInbox(user, post);
+  }
+
+  // If preference is `involved`, notify for every post where the user has been mentioned before in that channel
+  if (channelPreference === "involved") {
+    // First, we get all mentioned posts in that channel
+
+    const channelPosts = await getMentionedPostsInChannel(
+      post.channelId,
+      user.uid
+    );
+
+    // If there are any mentioned posts, then add to inbox
+    if (channelPosts.length) {
+      return addToInbox(user, post);
+    }
   }
 
   // If preference is `all`, notify for every post

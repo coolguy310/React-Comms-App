@@ -60,8 +60,7 @@ export const LogoutButton = styled("button", {
   alignItems: "center",
   justifyContent: "center",
   borderRadius: 6,
-  paddingTop: 12,
-  paddingBottom: 12,
+  marginTop: 12,
   "& svg": {
     marginRight: 8,
   },

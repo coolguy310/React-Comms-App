@@ -18,6 +18,7 @@ import {
   SidebarWrapper,
 } from "./AuthLayout.styled";
 import useAuthLayoutHook from "./useAuthLayoutHook";
+import Avatar from "../../ui/Avatar/Avatar";
 
 export default function AuthLayout() {
   const { initializing, user, location, onClickLink, inbox, signOut } =
@@ -67,9 +68,21 @@ export default function AuthLayout() {
               <ChannelsList />
             </div>
 
-            <LogoutButton onClick={signOut}>
-              <BiLogOut /> Logout
-            </LogoutButton>
+            <Flex column justifyCenter>
+              <Flex alignCenter css={{ width: "100%", marginBottom: 16 }}>
+                <Avatar css={{ marginRight: "1rem" }} src={user.photoURL!} />
+
+                <Box>
+                  <Text fontSize="md" fontWeight="bold">
+                    {user.displayName}
+                  </Text>
+                  <Text fontSize="xs">{user.email}</Text>
+                </Box>
+              </Flex>
+              <LogoutButton onClick={signOut}>
+                <BiLogOut /> Logout
+              </LogoutButton>
+            </Flex>
           </SidebarContent>
         </SidebarWrapper>
         <MainContent>

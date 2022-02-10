@@ -1,4 +1,2 @@
 Show avatar in post mention
-Show inbox count badge on sidebar
-Show user profile Avatar and name on sidebar
 "responses and comments to something I’m involved in"

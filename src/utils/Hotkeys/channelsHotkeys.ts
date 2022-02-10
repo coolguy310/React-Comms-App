@@ -22,7 +22,7 @@ export function useChannelsHotkeys({ channels }: ChannelsHotkeysProps) {
       parent: searchId,
       name,
       keywords: `# ${id}`,
-      shortcut: ["c", `${index + 1}`],
+      shortcut: [`${index + 1}`],
       section: "Channels",
       perform: () => navigate(`/${id}`),
     }));

@@ -74,7 +74,7 @@ export default function NewPost({ isFirstPost, channelName }: NewPostProps) {
         id: "reply",
         name: "Submit Reply",
         keywords: `submit post reply`,
-        shortcut: ["ctrl", "enter"],
+        shortcut: ["r"],
         perform: () => submitReply(),
       },
     ],

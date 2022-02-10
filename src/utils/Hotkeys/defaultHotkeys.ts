@@ -5,14 +5,14 @@ export const defaultHotkeys = ({ onClickLink }: HotkeyActionProps) => {
     {
       id: "inbox",
       name: "Go to Inbox",
-      shortcut: ["i"],
+      shortcut: ["g", "i"],
       keywords: "inbox",
       perform: () => onClickLink("/"),
     },
     {
       id: "compose",
       name: "Compose a new post",
-      shortcut: ["n"],
+      shortcut: ["c"],
       keywords: "compose new",
       perform: () => onClickLink("/new"),
     },

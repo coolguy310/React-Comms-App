@@ -4,12 +4,12 @@ export const sortByDate = (
 ) => {
   if (order === "descending") {
     return collection.sort(
-      (a: any, b: any) => b.createdAt.toDate() - a.createdAt.toDate()
+      (a: any, b: any) => +new Date(b.createdAt) - +new Date(a.createdAt)
     );
   }
 
   return collection.sort(
-    (a: any, b: any) => a.createdAt.toDate() - b.createdAt.toDate()
+    (a: any, b: any) => +new Date(a.createdAt) - +new Date(b.createdAt)
   );
 };
 

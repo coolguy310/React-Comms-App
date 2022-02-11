@@ -28,7 +28,7 @@ export default function CreateChannelModal() {
       id: nanoid(),
       creatorId: auth!.currentUser?.uid,
       name: channelName,
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
     };
 
     // Add to channel collection

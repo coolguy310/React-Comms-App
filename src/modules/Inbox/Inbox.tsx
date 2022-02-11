@@ -4,9 +4,9 @@ import Box from "components/ui/Box/Box";
 import Button from "components/ui/Button/Button";
 import Text from "components/ui/Text/Text";
 import { InboxText, InboxItem } from "./Inbox.styled";
-import { IPost } from "utils/types";
+import db, { functions } from "../../firebase";
 import { deleteDoc, doc } from "firebase/firestore";
-import db from "../../firebase";
+import { IPost } from "utils/types";
 import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { sortByDate, sortMentionsToTop } from "../../utils/helpers";
@@ -14,6 +14,8 @@ import Flex from "components/ui/Flex/Flex";
 import { useAppContext } from "utils/Context/Context";
 import { useInboxHotkeys } from "utils/Hotkeys/inboxHotkeys";
 import useArrowNavigation from "utils/Hooks/useArrowNavigation";
+import TriageActions from "./components/TriageActions/TriageActions";
+import { httpsCallable } from "firebase/functions";
 
 export default function Inbox() {
   const { activeSection, inbox } = useAppContext();
@@ -23,14 +25,22 @@ export default function Inbox() {
 
   const isActive = activeSection === "inbox";
 
-  const markAsDone = async (
-    post: IPost,
-    event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const markAsDone = async (post: IPost, event?: any) => {
     event?.stopPropagation();
 
     // Remove post from inbox
     await deleteDoc(doc(db, "users", auth.currentUser!.uid, "inbox", post.id));
+  };
+
+  const snoozePost = async (post: IPost, time: number, event?: any) => {
+    event?.stopPropagation();
+
+    // trigger the snooze function
+    const addMessage = httpsCallable(functions, "handleSnoozeTill");
+    addMessage({ post: { ...post, createdAt: post.createdAt }, time });
+
+    // then remove the post from inbox
+    markAsDone(post);
   };
 
   const openInboxPost = async (post: IPost) => {
@@ -44,7 +54,7 @@ export default function Inbox() {
     openInboxPost
   );
 
-  useInboxHotkeys({ post: inbox && inbox[cursor], markAsDone });
+  useInboxHotkeys({ post: inbox && inbox[cursor], markAsDone, snoozePost });
 
   if (!inbox) return null;
 
@@ -92,7 +102,7 @@ export default function Inbox() {
                     {authorName}
                   </Text>
                   <Text fontSize="xs">
-                    at {new Date(createdAt?.toDate()).toLocaleString()}
+                    at {new Date(createdAt).toLocaleString()}
                   </Text>
                 </Box>
               </Flex>
@@ -115,17 +125,11 @@ export default function Inbox() {
                 />
               </Box>
               <Flex alignEnd css={{ width: "100%", maxWidth: "20rem" }}>
-                <Button
-                  variant="bordered"
-                  css={{
-                    padding: "0.25rem 0.5rem",
-                    backgroundColor: "$gray3",
-                    fontSize: "small",
-                  }}
-                  onClick={(event) => markAsDone(post, event)}
-                >
-                  Mark as done
-                </Button>
+                <TriageActions
+                  post={inbox && inbox[cursor]}
+                  markAsDone={markAsDone}
+                  snoozePost={snoozePost}
+                />
                 {text.includes(`@@${auth.currentUser!.displayName}`) && (
                   // If text contains an @@ with the name of the logged in user, display the response requested badge
                   <Button

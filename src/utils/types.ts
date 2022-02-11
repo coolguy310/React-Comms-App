@@ -1,5 +1,3 @@
-import { Timestamp } from "firebase/firestore";
-
 export interface IUser {
   uid: string;
   name: string;
@@ -14,7 +12,7 @@ export interface IChannel {
   id: string;
   name: string;
   creatorId: string;
-  createdAt: Timestamp;
+  createdAt: Date;
 }
 
 export interface IPost {
@@ -28,7 +26,7 @@ export interface IPost {
   isFirstPost?: boolean;
   id: string;
   mentions: string[];
-  createdAt: Timestamp;
+  createdAt: Date;
 }
 
 export interface HotkeyActionProps {

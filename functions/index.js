@@ -11,7 +11,7 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
   response.send("Hello from Firebase!");
 });
 
-// Pass in the channelId to fetch all posts of the channel
+// Pass in the channelId and userId to fetch all mentioned posts of the user in the channel
 const getMentionedPostsInChannel = async (channelId, currentUserId) =>
   (
     await db
@@ -83,3 +83,21 @@ exports.onPostCreated = functions.firestore
       checkNotificationPreference(doc.data(), post)
     );
   });
+
+// Resolves a promise after a specified time
+const waitTill = (time) => {
+  return new Promise((res) => {
+    setTimeout(() => {
+      res("Done!");
+    }, time);
+  });
+};
+
+// wsit till specified time, then add post to inbox
+exports.handleSnoozeTill = functions.https.onCall(async (data, context) => {
+  console.log(data.time);
+
+  await waitTill(data.time);
+
+  return addToInbox(context.auth, data.post);
+});

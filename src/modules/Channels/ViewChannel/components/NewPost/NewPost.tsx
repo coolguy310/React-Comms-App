@@ -57,7 +57,7 @@ export default function NewPost({ isFirstPost, channelName }: NewPostProps) {
       id: nanoid(),
       mentions: mentions.map(({ id }) => id), // Map mentions into an array of mentioned user ids
       channelName,
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
     };
 
     // Add post to channel

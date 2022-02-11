@@ -39,7 +39,7 @@ export default function ViewChannel() {
                 {firstPost?.authorName}
               </Text>
               <Text fontSize="xs">
-                at {new Date(firstPost.createdAt.toDate()).toLocaleString()}
+                at {new Date(firstPost.createdAt).toLocaleString()}
               </Text>
             </Box>
             <Text
@@ -74,7 +74,7 @@ export default function ViewChannel() {
                       {authorName}
                     </Text>
                     <Text fontSize="xs">
-                      at {new Date(createdAt.toDate()).toLocaleString()}
+                      at {new Date(createdAt).toLocaleString()}
                     </Text>
                   </Box>
                   <Text

@@ -18,3 +18,10 @@ export const sortMentionsToTop = (collection: any[], userId: string) => {
     a.mentions.includes(userId) ? -1 : 1
   );
 };
+
+export const getSecondsFromNextWeekend = () => {
+  var d = new Date();
+  d.setDate(d.getDate() + ((6 - d.getDay()) % 6) + 1);
+
+  return (+d - +new Date()) / 1000;
+};

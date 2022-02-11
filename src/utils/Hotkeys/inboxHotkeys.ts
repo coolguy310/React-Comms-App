@@ -1,15 +1,18 @@
 import { useRegisterActions } from "kbar";
 import { IPost } from "utils/types";
+import "moment-timezone";
+import moment from "moment";
+import { getSecondsFromNextWeekend } from "../helpers";
 
 // Default snooze options
 export const snoozeOptions = [
   {
     name: "in 5 secs",
-    value: 5000,
+    value: 5,
   },
   {
     name: "in 10 secs",
-    value: 10000,
+    value: 10,
   },
   {
     name: "tomorrow",
@@ -21,7 +24,7 @@ export const snoozeOptions = [
   },
   {
     name: "this weekend",
-    value: 2.592e6,
+    value: getSecondsFromNextWeekend(),
   },
   {
     name: "next month",
@@ -74,8 +77,12 @@ export function useInboxHotkeys({
     id: name,
     parent: "remind",
     name,
-    keywords: `remind me ${value}`,
-    shortcut: [`Tue, 9:00 am`],
+    keywords: `remind notify snooze me in ${value}`,
+    shortcut: [
+      moment(new Date(), "DD-MM-YYYY hh:mm")
+        .add(value, `seconds`)
+        .format("ddd, MMM Do"),
+    ],
     section: "Inbox",
     perform: () => post && snoozePost(post, value),
   }));

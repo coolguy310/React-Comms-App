@@ -36,8 +36,8 @@ export default function Inbox() {
     event?.stopPropagation();
 
     // trigger the snooze function
-    const addMessage = httpsCallable(functions, "handleSnoozeTill");
-    addMessage({ post: { ...post, createdAt: post.createdAt }, time });
+    const snooze = httpsCallable(functions, "handleSnoozeTill");
+    snooze({ post, time });
 
     // then remove the post from inbox
     markAsDone(post);

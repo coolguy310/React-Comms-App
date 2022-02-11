@@ -89,14 +89,12 @@ const waitTill = (time) => {
   return new Promise((res) => {
     setTimeout(() => {
       res("Done!");
-    }, time);
+    }, time * 1000);
   });
 };
 
-// wsit till specified time, then add post to inbox
+// wait till specified time, then add post to inbox
 exports.handleSnoozeTill = functions.https.onCall(async (data, context) => {
-  console.log(data.time);
-
   await waitTill(data.time);
 
   return addToInbox(context.auth, data.post);

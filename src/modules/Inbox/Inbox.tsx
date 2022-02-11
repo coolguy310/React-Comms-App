@@ -13,18 +13,21 @@ import { sortByDate, sortMentionsToTop } from "../../utils/helpers";
 import Flex from "components/ui/Flex/Flex";
 import { useAppContext } from "utils/Context/Context";
 import { useInboxHotkeys } from "utils/Hotkeys/inboxHotkeys";
+import useArrowNavigation from "utils/Hooks/useArrowNavigation";
 
 export default function Inbox() {
-  const { inbox } = useAppContext();
+  const { activeSection, inbox } = useAppContext();
 
   const auth = getAuth();
   let navigate = useNavigate();
 
+  const isActive = activeSection === "inbox";
+
   const markAsDone = async (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    post: IPost
+    post: IPost,
+    event?: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    event.stopPropagation();
+    event?.stopPropagation();
 
     // Remove post from inbox
     await deleteDoc(doc(db, "users", auth.currentUser!.uid, "inbox", post.id));
@@ -35,7 +38,13 @@ export default function Inbox() {
     navigate(`/${post.channelId}`);
   };
 
-  useInboxHotkeys({ post: null });
+  const { cursor, setHovered, setSelected } = useArrowNavigation(
+    isActive,
+    inbox,
+    openInboxPost
+  );
+
+  useInboxHotkeys({ post: inbox && inbox[cursor], markAsDone });
 
   if (!inbox) return null;
 
@@ -58,11 +67,20 @@ export default function Inbox() {
           </Text>
         )}
 
-        {sortedInbox.map((post) => {
+        {sortedInbox.map((post, i) => {
           const { id, authorImage, authorName, channelName, text, createdAt } =
             post;
           return (
-            <InboxItem onClick={() => openInboxPost(post)} key={id}>
+            <InboxItem
+              className={`item ${isActive && i === cursor ? "active" : ""}`}
+              onClick={() => {
+                setSelected(post);
+                openInboxPost(post);
+              }}
+              onMouseEnter={() => setHovered(post)}
+              onMouseLeave={() => setHovered(undefined)}
+              key={id}
+            >
               <Flex css={{ width: "100%", maxWidth: "14rem" }}>
                 <Avatar css={{ marginRight: "1rem" }} src={authorImage} />
                 <Box>
@@ -104,7 +122,7 @@ export default function Inbox() {
                     backgroundColor: "$gray3",
                     fontSize: "small",
                   }}
-                  onClick={(event) => markAsDone(event, post)}
+                  onClick={(event) => markAsDone(post, event)}
                 >
                   Mark as done
                 </Button>

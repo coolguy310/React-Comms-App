@@ -2,7 +2,7 @@
 import db from "../../../firebase";
 import { onSnapshot, collection } from "firebase/firestore";
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IChannel } from "utils/types";
 import CreateChannelModal from "../CreateChannel/CreateChannelModal";
 import Box from "components/ui/Box/Box";
@@ -10,11 +10,15 @@ import Text from "components/ui/Text/Text";
 import { sortByDate } from "utils/helpers";
 import { useAppContext } from "utils/Context/Context";
 import { useChannelsHotkeys } from "utils/Hotkeys/channelsHotkeys";
+import useArrowNavigation from "utils/Hooks/useArrowNavigation";
 
 export default function ChannelsList() {
-  const { channels, setChannels } = useAppContext();
+  const { activeSection, channels, setChannels } = useAppContext();
+  const navigate = useNavigate();
 
   useChannelsHotkeys({ channels });
+
+  const isActive = activeSection === "channels";
 
   useEffect(() => {
     // Fetch channels
@@ -24,6 +28,17 @@ export default function ChannelsList() {
 
     return unsub;
   }, []);
+
+  // Route to a channel
+  const goToChannel = async (channel: IChannel) => {
+    navigate(`/${channel.id}`);
+  };
+
+  const { cursor, setHovered, setSelected } = useArrowNavigation(
+    isActive,
+    channels,
+    goToChannel
+  );
 
   const sortedChannels = sortByDate(channels);
 
@@ -42,17 +57,27 @@ export default function ChannelsList() {
 
         <CreateChannelModal />
       </Box>
-      <Box css={{ marginTop: 12, fontSize: "large" }}>
-        {sortedChannels.map(({ id, name }) => (
-          <Link key={id} to={`/${id}`}>
+      <Box css={{ marginTop: 12 }}>
+        {sortedChannels.map((channel, i) => (
+          <Link key={channel.id} to={`/${channel.id}`}>
             <Text
+              className={`item ${isActive && i === cursor ? "active" : ""}`}
+              onMouseEnter={() => setHovered(channel)}
+              onMouseLeave={() => setHovered(undefined)}
+              onClick={() => {
+                setSelected(channel);
+                goToChannel(channel);
+              }}
               css={{
                 cursor: "pointer",
-                marginBottom: 12,
-                "&:hover": { fontWeight: "bold" },
+                padding: "6px 0",
+                "&:hover": { background: "#a3a2a23a", fontWeight: "bold" },
+                "&.active": {
+                  background: "#a3a2a23a",
+                },
               }}
             >
-              # {name}
+              # {channel.name}
             </Text>
           </Link>
         ))}

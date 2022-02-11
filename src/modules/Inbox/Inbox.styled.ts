@@ -16,6 +16,12 @@ export const InboxItem = styled("div", {
   cursor: "pointer",
   borderBottom: "1px solid",
   borderBottomColor: "$gray4",
+  "&.active": {
+    background: "#d3d3d33b",
+  },
+  "&:hover": {
+    background: "#d3d3d33b",
+  },
 });
 
 export const InboxText = styled(Text, {

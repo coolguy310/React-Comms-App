@@ -5,12 +5,15 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAppContext } from "utils/Context/Context";
 import { IPost } from "utils/types";
 import db from "../../../firebase";
+import { useKeyPress } from "utils/Hooks/useKeyPress";
 
 export default function useAuthLayoutHook() {
   const auth = getAuth();
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState(() => auth.currentUser);
-  const { inbox, setInbox } = useAppContext();
+  const { inbox, setInbox, setActiveSection } = useAppContext();
+  const leftPress = useKeyPress("ArrowLeft");
+  const rightPress = useKeyPress("ArrowRight");
 
   let location = useLocation();
   const navigate = useNavigate();
@@ -60,6 +63,23 @@ export default function useAuthLayoutHook() {
       console.log(error.message);
     }
   };
+
+  // Switch active sections when left or right arrow keys are pressed
+  useEffect(() => {
+    if (leftPress) {
+      setActiveSection((prevState: any) =>
+        prevState === "inbox" ? "channels" : "inbox"
+      );
+    }
+  }, [leftPress, setActiveSection]);
+
+  useEffect(() => {
+    if (rightPress) {
+      setActiveSection((prevState: any) =>
+        prevState === "inbox" ? "channels" : "inbox"
+      );
+    }
+  }, [rightPress, setActiveSection]);
 
   return { initializing, user, inbox, location, onClickLink, signOut };
 }

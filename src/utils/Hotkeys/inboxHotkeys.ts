@@ -2,17 +2,15 @@ import { useRegisterActions } from "kbar";
 
 // need to get data
 import { IPost } from "../types";
-// import { useNavigate } from "react-router-dom";
 
 const searchId = "inbox1";
 
 interface InboxHotkeysProps {
   post?: IPost | null;
+  markAsDone: (post: IPost) => void;
 }
 
-export function useInboxHotkeys({ post }: InboxHotkeysProps) {
-  // const navigate = useNavigate();
-
+export function useInboxHotkeys({ post, markAsDone }: InboxHotkeysProps) {
   const rootSearchAction = [
     {
       id: searchId,
@@ -27,8 +25,8 @@ export function useInboxHotkeys({ post }: InboxHotkeysProps) {
       name: "Mark as Done",
       keywords: `mark done triage`,
       shortcut: ["e"],
-      // section: "Inbox",
-      // perform: () => onClickLink(`/${id}`),
+      section: "Inbox",
+      perform: () => post && markAsDone(post),
     },
   ];
 

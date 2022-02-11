@@ -6,6 +6,8 @@ interface AppContextProps {
   setChannels: (channels: IChannel[]) => void;
   inbox: IPost[] | null;
   setInbox: (inbox: IPost[]) => void;
+  activeSection?: "channels" | "inbox" | string;
+  setActiveSection: (section?: any) => void;
 }
 
 const AppContext = createContext<AppContextProps>({
@@ -13,6 +15,8 @@ const AppContext = createContext<AppContextProps>({
   setChannels: () => {},
   inbox: [],
   setInbox: () => {},
+  activeSection: "inbox",
+  setActiveSection: () => {},
 }); // Here, we are initializing our context states
 
 export const AppProvider = AppContext.Provider;

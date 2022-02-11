@@ -10,6 +10,7 @@ import Text from "components/ui/Text/Text";
 import Button from "components/ui/Button/Button";
 import { getAuth } from "firebase/auth";
 import { nanoid } from "nanoid";
+import { useRegisterActions } from "kbar";
 
 export default function CreateChannelModal() {
   const [channelName, setChannelName] = useState("");
@@ -40,6 +41,18 @@ export default function CreateChannelModal() {
     onClose();
     setChannelName("");
   };
+
+  // Register hotkey for opening create channel modal
+  useRegisterActions([
+    {
+      id: "new-channel",
+      name: "Create a new channel",
+      section: "Channels",
+      shortcut: ["n", "c"],
+      keywords: "channel new",
+      perform: () => setIsOpen(true),
+    },
+  ]);
 
   return (
     <div>

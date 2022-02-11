@@ -28,11 +28,7 @@ const animatorStyle = {
   boxShadow: "var(--shadow)",
 };
 
-interface SpotlightProps {
-  onClickLink: (path: string) => void;
-}
-
-export function Spotlight({ onClickLink }: SpotlightProps) {
+export function Spotlight() {
   const { query } = useKBar();
 
   console.log("query", query);

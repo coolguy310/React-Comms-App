@@ -11,10 +11,22 @@ import { IChannel, IPost } from "utils/types";
 function App() {
   const [channels, setChannels] = useState<IChannel[]>([]);
   const [inbox, setInbox] = useState<IPost[] | null>(null);
+  const [activeSection, setActiveSection] = useState<string | undefined>(
+    "inbox"
+  ); // this is the section where the arrow key navigation is being focused on, defaults to "inbox"
 
   return (
     // Declare context provider values
-    <AppProvider value={{ channels, setChannels, inbox, setInbox }}>
+    <AppProvider
+      value={{
+        channels,
+        setChannels,
+        inbox,
+        setInbox,
+        activeSection,
+        setActiveSection,
+      }}
+    >
       {/* Declare routes */}
       <BrowserRouter>
         <Routes>

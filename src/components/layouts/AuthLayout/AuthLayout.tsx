@@ -19,10 +19,13 @@ import {
 } from "./AuthLayout.styled";
 import useAuthLayoutHook from "./useAuthLayoutHook";
 import Avatar from "../../ui/Avatar/Avatar";
+import { useAppContext } from "utils/Context/Context";
 
 export default function AuthLayout() {
   const { initializing, user, location, onClickLink, inbox, signOut } =
     useAuthLayoutHook();
+
+  const { setActiveSection } = useAppContext();
 
   if (initializing)
     return (
@@ -40,8 +43,18 @@ export default function AuthLayout() {
   }
 
   return (
-    <KBarProvider actions={defaultHotkeys({ onClickLink })}>
-      <Spotlight onClickLink={onClickLink} />
+    <KBarProvider
+      options={{
+        callbacks: {
+          // Hide arrow key navigation when kbar is opened
+          onOpen: () => setActiveSection(null),
+          onClose: () => setActiveSection("inbox"),
+        },
+        disableScrollbarManagement: true,
+      }}
+      actions={defaultHotkeys({ onClickLink })}
+    >
+      <Spotlight />
 
       <PageContainer>
         <SidebarWrapper>

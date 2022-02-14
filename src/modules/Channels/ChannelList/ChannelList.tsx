@@ -4,7 +4,7 @@ import { onSnapshot, collection } from "firebase/firestore";
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IChannel } from "utils/types";
-import CreateChannelModal from "../CreateChannel/CreateChannelModal";
+import ChannelCreate from "../ChannelCreate/ChannelCreate";
 import Box from "components/ui/Box/Box";
 import Text from "components/ui/Text/Text";
 import { sortByDate } from "utils/helpers";
@@ -12,7 +12,7 @@ import { useAppContext } from "utils/Context/Context";
 import { useChannelsHotkeys } from "utils/Hotkeys/channelsHotkeys";
 import useArrowNavigation from "utils/Hooks/useArrowNavigation";
 
-export default function ChannelsList() {
+export default function ChannelList() {
   const { activeSection, channels, setChannels } = useAppContext();
   const navigate = useNavigate();
 
@@ -55,7 +55,7 @@ export default function ChannelsList() {
           CHANNELS
         </Text>
 
-        <CreateChannelModal />
+        <ChannelCreate />
       </Box>
       <Box css={{ marginTop: 12 }}>
         {sortedChannels.map((channel, i) => (

@@ -12,7 +12,7 @@ import { getAuth } from "firebase/auth";
 import { nanoid } from "nanoid";
 import { useRegisterActions } from "kbar";
 
-export default function CreateChannelModal() {
+export default function ChannelCreate() {
   const [channelName, setChannelName] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 

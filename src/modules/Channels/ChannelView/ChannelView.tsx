@@ -4,12 +4,12 @@ import Box from "components/ui/Box/Box";
 import Flex from "components/ui/Flex/Flex";
 import Text from "components/ui/Text/Text";
 import { IChannel } from "utils/types";
-import NewPost from "./components/NewPost/NewPost";
+import PostNew from "../../Posts/PostNew/PostNew";
 import NotificationsSettings from "./components/NotificationsSettings";
-import useViewChannelHook from "./useViewChannelHook";
+import useChannelViewHook from "./useChannelViewHook";
 
-export default function ViewChannel() {
-  const { channel, firstPost, sortedReplies } = useViewChannelHook();
+export default function ChannelView() {
+  const { channel, firstPost, sortedReplies } = useChannelViewHook();
 
   if (!channel) {
     return null;
@@ -88,7 +88,7 @@ export default function ViewChannel() {
           )
         )}
 
-        <NewPost isFirstPost={!firstPost} channelName={channel.name!} />
+        <PostNew isFirstPost={!firstPost} channelName={channel.name!} />
       </Box>
     </Box>
   );

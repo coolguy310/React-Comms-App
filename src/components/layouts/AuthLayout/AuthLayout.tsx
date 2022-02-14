@@ -5,7 +5,7 @@ import Flex from "components/ui/Flex/Flex";
 import { Spotlight } from "components/ui/Spotlight/Spotlight";
 import Text from "components/ui/Text/Text";
 import { KBarProvider } from "kbar";
-import ChannelsList from "modules/Channels/ChannelsList/ChannelsList";
+import ChannelList from "modules/Channels/ChannelList/ChannelList";
 import { BiLogOut } from "react-icons/bi";
 import { Link, Navigate, Outlet } from "react-router-dom";
 import { defaultHotkeys } from "utils/Hotkeys/defaultHotkeys";
@@ -78,7 +78,7 @@ export default function AuthLayout() {
                 </LinkItem>
               </Link>
 
-              <ChannelsList />
+              <ChannelList />
             </div>
 
             <Flex column justifyCenter>

@@ -5,7 +5,7 @@ import { sortByDate } from "utils/helpers";
 import { IChannel, IPost } from "utils/types";
 import db from "../../../firebase";
 
-export default function useViewChannelHook() {
+export default function useChannelViewHook() {
   const [channel, setChannel] = useState<IChannel | null>(null);
   const [channelPosts, setChannelPosts] = useState<IPost[]>([]);
 

@@ -11,7 +11,7 @@ import {
   onSnapshot,
   setDoc,
 } from "firebase/firestore";
-import db from "../../../../../firebase";
+import db from "../../../firebase";
 import { nanoid } from "nanoid";
 import { useParams } from "react-router-dom";
 import { IUser } from "utils/types";
@@ -22,7 +22,7 @@ interface NewPostProps {
   channelName: string;
 }
 
-export default function NewPost({ isFirstPost, channelName }: NewPostProps) {
+export default function PostNew({ isFirstPost, channelName }: NewPostProps) {
   const [newPostText, setNewPostText] = useState<string>("");
   const [mentions, setMentions] = useState<SuggestionDataItem[]>([]);
   const [users, setUsers] = useState<IUser[]>([]);

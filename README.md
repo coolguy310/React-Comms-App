@@ -6,7 +6,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 - Install dependencies - `yarn install`.
 - Create a `.env` file and paste the firebase SDK keys into it.
-  - The format should match `template.env`. You can find the keys in the Firebase Console under `Project Settings => General`
+  - The format should match `.env.sample`. You can find the keys in the Firebase Console under `Project Settings => General`
 - Start the development server by running `yarn start`. This runs the app in the development mode.
   Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 

@@ -15,6 +15,14 @@ export const triageOptions = [
     value: 10,
   },
   {
+    name: "in the next hour",
+    value: 3600,
+  },
+  {
+    name: "in the next 12 hours",
+    value: 43200,
+  },
+  {
     name: "tomorrow",
     value: 86400,
   },

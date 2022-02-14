@@ -41,7 +41,7 @@ export default function NewPost({ isFirstPost, channelName }: NewPostProps) {
 
   const submitReply = async (event?: React.FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
-    console.log(newPostText);
+
     if (!newPostText.trim()) return; // Text should not be empty
 
     setNewPostText(""); // Reset text

@@ -4,19 +4,19 @@ import Button from "components/ui/Button/Button";
 import Flex from "components/ui/Flex/Flex";
 import Text from "components/ui/Text/Text";
 import { Popover } from "react-tiny-popover";
-import { snoozeOptions } from "utils/Hotkeys/inboxHotkeys";
+import { triageOptions } from "utils/Hotkeys/inboxHotkeys";
 import { IPost } from "utils/types";
 
 interface TriageActionsProps {
   post: IPost;
   markAsDone: (post: IPost, event?: any) => void;
-  snoozePost: (post: IPost, time: number, event?: any) => void;
+  triagePost: (post: IPost, time: number, event?: any) => void;
 }
 
 export default function TriageActions({
   post,
   markAsDone,
-  snoozePost,
+  triagePost,
 }: TriageActionsProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -43,7 +43,7 @@ export default function TriageActions({
       >
         <Text fontSize="sm">Mark as done</Text>
       </Flex>
-      {snoozeOptions.map(({ name, value }) => (
+      {triageOptions.map(({ name, value }) => (
         <Flex
           key={name}
           css={{
@@ -53,7 +53,7 @@ export default function TriageActions({
           }}
           justifyBetween
           alignCenter
-          onClick={(event) => snoozePost(post, value, event)}
+          onClick={(event) => triagePost(post, value, event)}
         >
           <Text fontSize="sm">Remind me {name}</Text>
         </Flex>

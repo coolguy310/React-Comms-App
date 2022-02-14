@@ -94,7 +94,7 @@ const waitTill = (time) => {
 };
 
 // wait till specified time, then add post to inbox
-exports.handleSnoozeTill = functions.https.onCall(async (data, context) => {
+exports.handleTriageTill = functions.https.onCall(async (data, context) => {
   await waitTill(data.time);
 
   return addToInbox(context.auth, data.post);

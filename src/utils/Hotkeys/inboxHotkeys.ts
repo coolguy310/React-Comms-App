@@ -4,8 +4,8 @@ import "moment-timezone";
 import moment from "moment";
 import { getSecondsFromNextWeekend } from "../helpers";
 
-// Default snooze options
-export const snoozeOptions = [
+// Default triage options
+export const triageOptions = [
   {
     name: "in 5 secs",
     value: 5,
@@ -37,13 +37,13 @@ const searchId = "inbox1";
 interface InboxHotkeysProps {
   post?: IPost | null;
   markAsDone: (post: IPost) => void;
-  snoozePost: (post: IPost, time: any) => void;
+  triagePost: (post: IPost, time: any) => void;
 }
 
 export function useInboxHotkeys({
   post,
   markAsDone,
-  snoozePost,
+  triagePost,
 }: InboxHotkeysProps) {
   const rootSearchActions = [
     {
@@ -72,21 +72,21 @@ export function useInboxHotkeys({
     },
   ];
 
-  // Map snooze options into kbar actions
-  const snoozeActions = snoozeOptions?.map(({ name, value }) => ({
+  // Map triage options into kbar actions
+  const triageActions = triageOptions?.map(({ name, value }) => ({
     id: name,
     parent: "remind",
     name,
-    keywords: `remind notify snooze me in ${value}`,
+    keywords: `remind notify triage me in ${value}`,
     shortcut: [
       moment(new Date(), "DD-MM-YYYY hh:mm")
         .add(value, `seconds`)
         .format("ddd, MMM Do"),
     ],
     section: "Inbox",
-    perform: () => post && snoozePost(post, value),
+    perform: () => post && triagePost(post, value),
   }));
 
   // Register hotkeys for inbox actions
-  useRegisterActions([...rootSearchActions, ...snoozeActions], [post]);
+  useRegisterActions([...rootSearchActions, ...triageActions], [post]);
 }

@@ -32,12 +32,12 @@ export default function Inbox() {
     await deleteDoc(doc(db, "users", auth.currentUser!.uid, "inbox", post.id));
   };
 
-  const snoozePost = async (post: IPost, time: number, event?: any) => {
+  const triagePost = async (post: IPost, time: number, event?: any) => {
     event?.stopPropagation();
 
-    // trigger the snooze function
-    const snooze = httpsCallable(functions, "handleSnoozeTill");
-    snooze({ post, time });
+    // trigger the triage function
+    const triage = httpsCallable(functions, "handleTriageTill");
+    triage({ post, time });
 
     // then remove the post from inbox
     markAsDone(post);
@@ -54,7 +54,7 @@ export default function Inbox() {
     openInboxPost
   );
 
-  useInboxHotkeys({ post: inbox && inbox[cursor], markAsDone, snoozePost });
+  useInboxHotkeys({ post: inbox && inbox[cursor], markAsDone, triagePost });
 
   if (!inbox) return null;
 
@@ -128,7 +128,7 @@ export default function Inbox() {
                 <TriageActions
                   post={inbox && inbox[cursor]}
                   markAsDone={markAsDone}
-                  snoozePost={snoozePost}
+                  triagePost={triagePost}
                 />
                 {text.includes(`@@${auth.currentUser!.displayName}`) && (
                   // If text contains an @@ with the name of the logged in user, display the response requested badge

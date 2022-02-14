@@ -1,3 +1,5 @@
+const moment = require("moment");
+require("moment-timezone");
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp(functions.config().firebase);
@@ -35,6 +37,27 @@ const addToInbox = (user, post) => {
         user.uid,
         "postId => ",
         post.id
+      );
+    });
+};
+
+// Edit a post in the inbox of a user
+const editInboxPost = (user, post, key, value) => {
+  db.collection(`users/${user.uid}/inbox`)
+    .doc(post.id)
+    .update({
+      [key]: value,
+    })
+    .then((doc) => {
+      functions.logger.info(
+        "Inbox post updated successfully!, userId => ",
+        user.uid,
+        "postId => ",
+        post.id,
+        ",",
+        key,
+        "changed to =>",
+        value
       );
     });
 };
@@ -99,3 +122,28 @@ exports.handleTriageTill = functions.https.onCall(async (data, context) => {
 
   return addToInbox(context.auth, data.post);
 });
+
+// Run a scheduled function every minute that:
+exports.scheduledFunction = functions.pubsub
+  .schedule("every 1 minutes")
+  .onRun(async (context) => {
+    // Fetches all users,
+    const users = await db.collection("users").get();
+
+    return users.forEach(async (doc) => {
+      const user = doc.data();
+
+      // Then gets all posts in the user's inbox where the `triagedTill` timestamp is lesser than the current timestamp (now)
+      const usersCurrentTriages = await db
+        .collection(`users/${user.uid}/inbox`)
+        .where("triagedTill", "<", moment(new Date()).valueOf())
+        .get();
+
+      usersCurrentTriages.forEach((doc) => {
+        const post = doc.data();
+
+        // and finally, it updates all such posts by setting the `triagedTill` value to null
+        editInboxPost(user, post, "triagedTill", null);
+      });
+    });
+  });

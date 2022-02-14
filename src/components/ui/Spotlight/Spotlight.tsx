@@ -31,7 +31,6 @@ const animatorStyle = {
 export function Spotlight() {
   const { query } = useKBar();
 
-  console.log("query", query);
   useEffect(() => {
     function handleSpotlightShortcut(event: any) {
       if (

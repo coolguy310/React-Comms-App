@@ -4,8 +4,8 @@ import Box from "components/ui/Box/Box";
 import Button from "components/ui/Button/Button";
 import Text from "components/ui/Text/Text";
 import { InboxText, InboxItem } from "./Inbox.styled";
-import db, { functions } from "../../firebase";
-import { deleteDoc, doc } from "firebase/firestore";
+import db from "../../firebase";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { IPost } from "utils/types";
 import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +15,8 @@ import { useAppContext } from "utils/Context/Context";
 import { useInboxHotkeys } from "utils/Hotkeys/inboxHotkeys";
 import useArrowNavigation from "utils/Hooks/useArrowNavigation";
 import TriageActions from "./components/TriageActions/TriageActions";
-import { httpsCallable } from "firebase/functions";
+import "moment-timezone";
+import moment from "moment";
 
 export default function Inbox() {
   const { activeSection, inbox } = useAppContext();
@@ -28,19 +29,36 @@ export default function Inbox() {
   const markAsDone = async (post: IPost, event?: any) => {
     event?.stopPropagation();
 
-    // Remove post from inbox
-    await deleteDoc(doc(db, "users", auth.currentUser!.uid, "inbox", post.id));
+    // Set `done` value of selected post to `true`
+    await updateDoc(doc(db, "users", auth.currentUser!.uid, "inbox", post.id), {
+      done: true,
+    });
   };
 
   const triagePost = async (post: IPost, time: number, event?: any) => {
     event?.stopPropagation();
+    const triagedTill = moment(new Date()).add(time, `seconds`).valueOf();
 
-    // trigger the triage function
-    const triage = httpsCallable(functions, "handleTriageTill");
-    triage({ post, time });
+    // Update the `triagedTill` value to the selected time
+    await updateDoc(doc(db, "users", auth.currentUser!.uid, "inbox", post.id), {
+      triagedTill,
+    });
 
-    // then remove the post from inbox
-    markAsDone(post);
+    // Then, add the timestamps to the user's subcollection  of triageHistory
+    await addDoc(
+      collection(
+        db,
+        "users",
+        auth.currentUser!.uid,
+        "inbox",
+        post.id,
+        "triageHistory"
+      ),
+      {
+        triagedTill,
+        triagedAt: moment(new Date()).valueOf(),
+      }
+    );
   };
 
   const openInboxPost = async (post: IPost) => {

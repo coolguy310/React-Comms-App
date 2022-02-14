@@ -1,2 +1,3 @@
 Show avatar in post mention
 Sort inbox with request response on top always
+force hotkeying in notification settings and inbox post actions

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppContext } from "utils/Context/Context";
 import { IPost } from "utils/types";
@@ -42,7 +42,11 @@ export default function useAuthLayoutHook() {
     let unsub;
     if (auth.currentUser) {
       unsub = onSnapshot(
-        collection(db, "users", auth.currentUser!.uid, "inbox"),
+        query(
+          collection(db, "users", auth.currentUser!.uid, "inbox"),
+          where("done", "==", false),
+          where("triagedTill", "==", null)
+        ),
         ({ docs }) => {
           setInbox(
             docs.map((doc) => ({

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState } from "react";
 import Input from "components/forms/Input/Input";
 import Modal from "components/ui/Modal/Modal";
-import React, { useEffect, useState } from "react";
 import { IoAdd } from "react-icons/io5";
 import db from "../../../firebase";
 import { Firestore, setDoc, doc } from "firebase/firestore";
@@ -12,6 +12,9 @@ import { getAuth } from "firebase/auth";
 import { nanoid } from "nanoid";
 import { useRegisterActions } from "kbar";
 import Flex from "components/ui/Flex/Flex";
+import { MdInfo } from "react-icons/md";
+import { Tooltip } from "react-tippy";
+import "react-tippy/dist/tippy.css";
 
 const initialChannelDetails = {
   name: "",
@@ -220,6 +223,10 @@ export default function ChannelCreate() {
                     onChange={() => handleChange("classification", "public")}
                   />
                   <label htmlFor="public">Public</label>
+                  &nbsp;
+                  <Tooltip title="Anyone at your organization can find and join">
+                    <MdInfo color="gray" />
+                  </Tooltip>
                 </Flex>
 
                 <Flex alignCenter>
@@ -234,27 +241,14 @@ export default function ChannelCreate() {
                     onChange={() => handleChange("classification", "private")}
                   />
                   <label htmlFor="private">Private</label>
+                  &nbsp;
+                  <Tooltip title="Only the people you have invited can join">
+                    <MdInfo color="gray" />
+                  </Tooltip>
                 </Flex>
               </Flex>
             </Flex>
             <Flex justifyEnd alignCenter css={{ marginTop: 24 }}>
-              {/* <Button
-                type="button"
-                onClick={onClose}
-                variant="bordered"
-                css={{ marginRight: "1rem", width: "10rem", height: "3rem" }}
-                className="h-12 rounded-md w-40"
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                variant="primary"
-                css={{ width: "100%", height: "3rem" }}
-              >
-                Create
-              </Button> */}
-
               <Box css={{ padding: "0.5rem 1rem" }} as="kbd">
                 CTRL
               </Box>
@@ -262,7 +256,7 @@ export default function ChannelCreate() {
                 as="kbd"
                 css={{ margin: "0 0.75rem", padding: "0.5rem 1rem" }}
               >
-                RETURN
+                ENTER
               </Box>
               <Text>to create</Text>
             </Flex>

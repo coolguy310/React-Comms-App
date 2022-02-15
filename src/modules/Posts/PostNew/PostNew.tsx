@@ -1,111 +1,75 @@
-import React, { useEffect, useState } from "react";
-import Avatar from "components/ui/Avatar/Avatar";
+import React from "react";
 import Box from "components/ui/Box/Box";
-import Button from "components/ui/Button/Button";
-import { getAuth } from "firebase/auth";
-import { MentionsInput, Mention, SuggestionDataItem } from "react-mentions";
-import {
-  collection,
-  doc,
-  Firestore,
-  onSnapshot,
-  setDoc,
-} from "firebase/firestore";
-import db from "../../../firebase";
-import { nanoid } from "nanoid";
-import { useParams } from "react-router-dom";
-import { IUser } from "utils/types";
-import { useRegisterActions } from "kbar";
+import { MentionsInput, Mention } from "react-mentions";
+import Flex from "components/ui/Flex/Flex";
+import Text from "components/ui/Text/Text";
+import Input from "components/forms/Input/Input";
+import usePostNewHook from "./usePostNewHook";
+import ReactTags from "react-tag-autocomplete";
 
-interface NewPostProps {
-  isFirstPost: boolean;
-  channelName: string;
-}
-
-export default function PostNew({ isFirstPost, channelName }: NewPostProps) {
-  const [newPostText, setNewPostText] = useState<string>("");
-  const [mentions, setMentions] = useState<SuggestionDataItem[]>([]);
-  const [users, setUsers] = useState<IUser[]>([]);
-
-  const auth = getAuth();
-  const params = useParams();
-
-  useEffect(() => {
-    // Fetch users and map to users state
-    const unsub = onSnapshot(collection(db, "users"), (snapshot) => {
-      setUsers(snapshot.docs.map((doc) => doc.data() as IUser));
-    });
-
-    return unsub;
-  }, [auth.currentUser]);
-
-  const submitReply = async (event?: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
-
-    if (!newPostText.trim()) return; // Text should not be empty
-
-    setNewPostText(""); // Reset text
-
-    const postPayload = {
-      text: newPostText,
-      authorId: auth.currentUser!.uid,
-      authorEmail: auth.currentUser!.email,
-      authorImage: auth.currentUser!.photoURL,
-      authorName: auth.currentUser!.displayName,
-      isFirstPost,
-      channelId: params.id,
-      id: nanoid(),
-      mentions: mentions.map(({ id }) => id), // Map mentions into an array of mentioned user ids
-      channelName,
-      createdAt: new Date().toISOString(),
-      done: false,
-      triagedTill: null,
-    };
-
-    // Add post to channel
-    await setDoc(
-      doc(db as Firestore, "channels", params.id!, "posts", postPayload.id),
-      postPayload
-    );
-  };
-
-  // Register hotkey for submitting post
-  useRegisterActions(
-    [
-      {
-        id: "reply",
-        name: "Submit Reply",
-        keywords: `submit post reply`,
-        shortcut: ["r"],
-        perform: () => submitReply(),
-      },
-    ],
-    [newPostText]
-  );
-
-  let placeholderText = "Write a comment here";
-
-  if (isFirstPost) placeholderText = "Write the first post here";
-
-  const userSuggestions: SuggestionDataItem[] = users.map(({ uid, name }) => ({
-    id: uid,
-    display: name,
-  }));
+export default function PostNew() {
+  const {
+    recipients,
+    channels,
+    newPostSubject,
+    setNewPostSubject,
+    newPostText,
+    setNewPostText,
+    userSuggestions,
+    setMentions,
+    onTagAddition,
+    onTagDelete,
+  } = usePostNewHook();
 
   return (
-    <Box
-      as="form"
-      css={{ padding: "0.75rem 0.5rem", display: "flex" }}
-      onSubmit={submitReply}
-    >
-      <Avatar
-        src={auth.currentUser!.photoURL as string}
+    <Box as="form" css={{ padding: "0.75rem 2.5rem" }}>
+      <Flex justifyBetween alignCenter css={{ paddingRight: "6rem" }}>
+        <Text as="h1" fontWeight="bold" css={{ fontSize: 36 }}>
+          Write a new post
+        </Text>
+      </Flex>
+      <Box as="hr" css={{ marginTop: "1rem", marginBottom: "1rem" }} />
+
+      <Flex alignCenter>
+        <Text css={{ width: "4rem" }}>To:</Text>
+        <ReactTags
+          placeholderText="Add recipients"
+          tags={recipients}
+          suggestions={channels}
+          onDelete={onTagDelete}
+          onAddition={onTagAddition}
+          // tagComponent={({ tag, removeButtonText, onDelete }) => {
+          //   return (
+          //     <button
+          //       type="button"
+          //       // title={`${removeButtonText}: ${tag.name}`}
+          //       // onClick={onDelete}
+          //     >
+          //       {tag.name}
+          //     </button>
+          //   );
+          // }}
+        />
+      </Flex>
+      <Box as="hr" css={{ margin: "0.5rem 0" }} />
+      <Input
+        value={newPostSubject}
+        onChange={(event) => setNewPostSubject(event.target.value)}
         css={{
-          marginRight: "1rem",
+          border: 0,
+          padding: 0,
+          background: "transparent",
+          borderBottom: "1px solid lightgray",
+          fontWeight: "bold",
+          marginBottom: 8,
+          "&::placeholder": {
+            color: "$gray9",
+          },
         }}
+        placeholder="Subject"
       />
 
-      <Box css={{ width: "100%" }}>
+      <Box className="newPost" css={{ width: "100%" }}>
         <MentionsInput
           value={newPostText}
           onChange={(event, value, newPlainTextValue, mentions) => {
@@ -113,7 +77,7 @@ export default function PostNew({ isFirstPost, channelName }: NewPostProps) {
             setMentions(mentions);
           }}
           allowSpaceInQuery
-          placeholder={placeholderText}
+          placeholder="Body"
           className="mentions"
           allowSuggestionsAboveCursor
         >
@@ -131,21 +95,15 @@ export default function PostNew({ isFirstPost, channelName }: NewPostProps) {
           />
         </MentionsInput>
 
-        <Box
-          css={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}
-        >
-          <Button
-            type="submit"
-            variant="bordered"
-            css={{
-              width: "12rem",
-              padding: "0.5rem 1rem",
-              backgroundColor: "$gray6",
-            }}
-          >
-            Submit
-          </Button>
-        </Box>
+        <Flex justifyEnd alignCenter css={{ marginTop: 16 }}>
+          <Box css={{ padding: "0.5rem 1rem" }} as="kbd">
+            CTRL
+          </Box>
+          <Box as="kbd" css={{ margin: "0 0.75rem", padding: "0.5rem 1rem" }}>
+            ENTER
+          </Box>
+          <Text>to send</Text>
+        </Flex>
       </Box>
     </Box>
   );

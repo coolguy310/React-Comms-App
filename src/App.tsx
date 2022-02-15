@@ -7,6 +7,8 @@ import Inbox from "modules/Inbox/Inbox";
 import ChannelView from "modules/Channels/ChannelView/ChannelView";
 import { AppProvider } from "utils/Context/Context";
 import { IChannel, IPost } from "utils/types";
+import PostView from "modules/Posts/PostView/PostView";
+import PostNew from "modules/Posts/PostNew/PostNew";
 
 function App() {
   const [channels, setChannels] = useState<IChannel[]>([]);
@@ -33,7 +35,11 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<AuthLayout />}>
             <Route index element={<Inbox />} />
-            <Route path=":id" element={<ChannelView />} />
+            <Route path="/new" element={<PostNew />} />
+            <Route path=":id">
+              <Route index element={<ChannelView />} />
+              <Route path="posts" element={<PostView />} />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>

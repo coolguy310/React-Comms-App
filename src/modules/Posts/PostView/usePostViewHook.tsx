@@ -1,18 +1,11 @@
 import { useEffect, useState } from "react";
-import {
-  collection,
-  doc,
-  getDoc,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { useParams } from "react-router-dom";
 import { sortByDate } from "utils/helpers";
 import { IChannel, IPost } from "utils/types";
 import db from "../../../firebase";
 
-export default function useChannelViewHook() {
+export default function usePostViewHook() {
   const [channel, setChannel] = useState<IChannel | null>(null);
   const [channelPosts, setChannelPosts] = useState<IPost[]>([]);
 
@@ -37,12 +30,9 @@ export default function useChannelViewHook() {
   }, [params.id]);
 
   useEffect(() => {
-    // Fetch all main posts of the channel (posts that do not have a `replyTo` value)
+    // Fetch all posts of the channel
     const unsub = onSnapshot(
-      query(
-        collection(db, "channels", params.id!, "posts"),
-        where("replyTo", "==", null)
-      ),
+      collection(db, "channels", params.id!, "posts"),
       (snapshot) => {
         setChannelPosts(snapshot.docs.map((doc) => doc.data() as IPost));
       }
@@ -51,5 +41,12 @@ export default function useChannelViewHook() {
     return unsub;
   }, [params.id]);
 
-  return { channel, channelPosts: sortByDate(channelPosts) };
+  // Get the first post in the channel
+  const firstPost = channelPosts.find(({ isFirstPost }) => isFirstPost);
+
+  const postReplies = channelPosts.filter(({ isFirstPost }) => !isFirstPost);
+
+  const sortedReplies = sortByDate(postReplies);
+
+  return { channel, channelPosts, firstPost, sortedReplies };
 }

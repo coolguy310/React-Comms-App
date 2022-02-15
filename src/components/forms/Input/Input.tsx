@@ -1,20 +1,15 @@
-import React from "react";
-import { StyledInput } from "./Input.styled";
+import { styled } from "stitches.config";
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+const Input = styled("input", {
+  border: "1px solid",
+  paddingLeft: "1rem",
+  paddingRight: "1rem",
+  width: "100%",
+  height: "3rem",
+  borderColor: "$gray5",
+  "&::placeholder": {
+    color: "$gray7",
+  },
+});
 
-export default function Input({
-  value,
-  onChange,
-  placeholder,
-  ...rest
-}: InputProps) {
-  return (
-    <StyledInput
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      {...rest}
-    />
-  );
-}
+export default Input;

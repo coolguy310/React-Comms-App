@@ -11,6 +11,8 @@ export interface IUser {
 export interface IChannel {
   id: string;
   name: string;
+  description: string;
+  classification: "public" | "private";
   creatorId: string;
   createdAt: Date;
 }

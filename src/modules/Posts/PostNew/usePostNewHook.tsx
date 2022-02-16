@@ -68,7 +68,7 @@ export default function usePostNewHook() {
       createdAt: new Date().toISOString(),
       replyTo: null,
       done: false,
-      triagedTill: null,
+      triagedUntil: null,
     };
 
     // Add post to each of the recipient channels

@@ -124,7 +124,7 @@ exports.handleTriageTill = functions.https.onCall(async (data, context) => {
 });
 
 // Run a scheduled function every minute that:
-exports.scheduledFunction = functions.pubsub
+exports.scheduledInboxTriageUpdate = functions.pubsub
   .schedule("every 1 minutes")
   .onRun(async (context) => {
     // Fetches all users,
@@ -133,17 +133,17 @@ exports.scheduledFunction = functions.pubsub
     return users.forEach(async (doc) => {
       const user = doc.data();
 
-      // Then gets all posts in the user's inbox where the `triagedTill` timestamp is lesser than the current timestamp (now)
+      // Then gets all posts in the user's inbox where the `triagedUntil` timestamp is lesser than the current timestamp (now)
       const usersCurrentTriages = await db
         .collection(`users/${user.uid}/inbox`)
-        .where("triagedTill", "<", moment(new Date()).valueOf())
+        .where("triagedUntil", "<", moment(new Date()).valueOf())
         .get();
 
       usersCurrentTriages.forEach((doc) => {
         const post = doc.data();
 
-        // and finally, it updates all such posts by setting the `triagedTill` value to null
-        editInboxPost(user, post, "triagedTill", null);
+        // and finally, it updates all such posts by setting the `triagedUntil` value to null
+        editInboxPost(user, post, "triagedUntil", null);
       });
     });
   });

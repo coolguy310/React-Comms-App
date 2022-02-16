@@ -62,7 +62,7 @@ export default function PostReply({
       channelName,
       createdAt: new Date().toISOString(),
       done: false,
-      triagedTill: null,
+      triagedUntil: null,
     };
 
     // Add post to channel

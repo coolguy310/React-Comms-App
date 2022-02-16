@@ -45,7 +45,7 @@ export default function useAuthLayoutHook() {
         query(
           collection(db, "users", auth.currentUser!.uid, "inbox"),
           where("done", "==", false),
-          where("triagedTill", "==", null)
+          where("triagedUntil", "==", null)
         ),
         ({ docs }) => {
           setInbox(

@@ -37,11 +37,11 @@ export default function Inbox() {
 
   const triagePost = async (post: IPost, time: number, event?: any) => {
     event?.stopPropagation();
-    const triagedTill = moment(new Date()).add(time, `seconds`).valueOf();
+    const triagedUntil = moment(new Date()).add(time, `seconds`).valueOf();
 
-    // Update the `triagedTill` value to the selected time
+    // Update the `triagedUntil` value to the selected time
     await updateDoc(doc(db, "users", auth.currentUser!.uid, "inbox", post.id), {
-      triagedTill,
+      triagedUntil,
     });
 
     // Then, add the timestamps to the user's subcollection  of triageHistory
@@ -55,7 +55,7 @@ export default function Inbox() {
         "triageHistory"
       ),
       {
-        triagedTill,
+        triagedUntil,
         triagedAt: moment(new Date()).valueOf(),
       }
     );

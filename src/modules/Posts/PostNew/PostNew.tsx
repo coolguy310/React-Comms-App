@@ -86,12 +86,14 @@ export default function PostNew() {
             markup="<span id='__id__' class='post-mention'>@__display__</span>"
             data={userSuggestions}
             className="mentions__mention"
+            onAdd={(id, name) => onTagAddition({ id, name })}
           />
           <Mention
             trigger="@@"
             markup="<span id='__id__' class='post-request-response'>@@__display__</span>"
             data={userSuggestions}
             className="mentions__request-response"
+            onAdd={(id, name) => onTagAddition({ id, name })}
           />
         </MentionsInput>
 

@@ -93,7 +93,10 @@ export default function usePostNewHook() {
   // Add channel to list of recipients
   const onTagAddition = useCallback(
     (newTag) => {
-      setRecipients([...recipients, newTag]);
+      // Avoid repitition of recipients
+      if (!recipients.find(({ id }) => id === newTag.id)) {
+        setRecipients([...recipients, newTag]);
+      }
     },
     [recipients]
   );
@@ -124,6 +127,7 @@ export default function usePostNewHook() {
     mentions,
     channels,
     recipients,
+    setRecipients,
     setNewPostText,
     setNewPostSubject,
     setMentions,

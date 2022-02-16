@@ -72,18 +72,18 @@ export default function useAuthLayoutHook() {
   useEffect(() => {
     if (leftPress) {
       setActiveSection((prevState: any) =>
-        prevState === "inbox" ? "channels" : "inbox"
+        prevState === location.pathname ? "channels" : location.pathname
       );
     }
-  }, [leftPress, setActiveSection]);
+  }, [leftPress, location.pathname, setActiveSection]);
 
   useEffect(() => {
     if (rightPress) {
       setActiveSection((prevState: any) =>
-        prevState === "inbox" ? "channels" : "inbox"
+        prevState === location.pathname ? "channels" : location.pathname
       );
     }
-  }, [rightPress, setActiveSection]);
+  }, [location.pathname, rightPress, setActiveSection]);
 
   return { initializing, user, inbox, location, onClickLink, signOut };
 }

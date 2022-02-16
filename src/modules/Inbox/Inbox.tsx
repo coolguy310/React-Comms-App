@@ -17,6 +17,7 @@ import useArrowNavigation from "utils/Hooks/useArrowNavigation";
 import TriageActions from "./components/TriageActions/TriageActions";
 import "moment-timezone";
 import moment from "moment";
+import usePathMatch from "utils/Hooks/usePathMatch";
 
 export default function Inbox() {
   const { activeSection, inbox } = useAppContext();
@@ -24,7 +25,8 @@ export default function Inbox() {
   const auth = getAuth();
   let navigate = useNavigate();
 
-  const isActive = activeSection === "inbox";
+  // Register isActive on inbox if the activeSection matches the "/" pattern
+  const isActive = !!usePathMatch(activeSection, "/");
 
   const markAsDone = async (post: IPost, event?: any) => {
     event?.stopPropagation();

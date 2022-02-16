@@ -7,16 +7,24 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { sortByDate } from "utils/helpers";
 import { IChannel, IPost } from "utils/types";
 import db from "../../../firebase";
+import { useAppContext } from "utils/Context/Context";
+import useArrowNavigation from "utils/Hooks/useArrowNavigation";
+import usePathMatch from "utils/Hooks/usePathMatch";
 
 export default function useChannelViewHook() {
   const [channel, setChannel] = useState<IChannel | null>(null);
   const [channelPosts, setChannelPosts] = useState<IPost[]>([]);
 
   const params = useParams();
+  const navigate = useNavigate();
+  const { activeSection } = useAppContext();
+
+  // Register isActive on channelPosts if the activeSection matches the "/:id" pattern
+  const isActive = !!usePathMatch(activeSection, "/:id");
 
   useEffect(() => {
     // Clear channel states when switching between channel routes
@@ -51,5 +59,24 @@ export default function useChannelViewHook() {
     return unsub;
   }, [params.id]);
 
-  return { channel, channelPosts: sortByDate(channelPosts) };
+  const openChannelPost = (post: IPost) => {
+    // Route to channel's post
+    navigate(`/${params.id}/${post.id}`);
+  };
+
+  const { cursor, setHovered, setSelected } = useArrowNavigation(
+    isActive,
+    channelPosts,
+    openChannelPost
+  );
+
+  return {
+    channel,
+    channelPosts: sortByDate(channelPosts),
+    cursor,
+    isActive,
+    setHovered,
+    setSelected,
+    openChannelPost,
+  };
 }

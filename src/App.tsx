@@ -13,9 +13,7 @@ import PostNew from "modules/Posts/PostNew/PostNew";
 function App() {
   const [channels, setChannels] = useState<IChannel[]>([]);
   const [inbox, setInbox] = useState<IPost[] | null>(null);
-  const [activeSection, setActiveSection] = useState<string | undefined>(
-    "inbox"
-  ); // this is the section where the arrow key navigation is being focused on, defaults to "inbox"
+  const [activeSection, setActiveSection] = useState<string>("inbox"); // this is the section where the arrow key navigation is being focused on, defaults to "inbox"
 
   return (
     // Declare context provider values
@@ -38,7 +36,7 @@ function App() {
             <Route path="/new" element={<PostNew />} />
             <Route path=":id">
               <Route index element={<ChannelView />} />
-              <Route path="posts" element={<PostView />} />
+              <Route path=":postId" element={<PostView />} />
             </Route>
           </Route>
         </Routes>

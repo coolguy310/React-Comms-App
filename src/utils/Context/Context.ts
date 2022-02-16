@@ -6,7 +6,7 @@ interface AppContextProps {
   setChannels: (channels: IChannel[]) => void;
   inbox: IPost[] | null;
   setInbox: (inbox: IPost[]) => void;
-  activeSection?: "channels" | "inbox" | string;
+  activeSection: "channels" | "inbox" | string;
   setActiveSection: (section?: any) => void;
 }
 

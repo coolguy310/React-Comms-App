@@ -62,7 +62,6 @@ export default function usePostNewHook() {
       authorEmail: auth.currentUser!.email,
       authorImage: auth.currentUser!.photoURL,
       authorName: auth.currentUser!.displayName,
-
       id: nanoid(),
       mentions: mentions.map(({ id }) => id), // Map mentions into an array of mentioned user ids
       createdAt: new Date().toISOString(),
@@ -75,11 +74,12 @@ export default function usePostNewHook() {
     recipients.forEach(async (channel) => {
       await setDoc(
         doc(db as Firestore, "channels", channel.id!, "posts", postPayload.id),
-        { ...postPayload, channelId: channel.id }
+        { ...postPayload, channelId: channel.id, channelName: channel.name }
       );
     });
 
-    navigate(`/${recipients[0].id}`);
+    // Navigate to the new post on the first recipient channel
+    navigate(`/${recipients[0].id}/${postPayload.id}`);
   };
 
   // Remove channel from recipients

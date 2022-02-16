@@ -4,4 +4,3 @@ force hotkeying in notification settings and inbox post actions
 
 Feedback:
 - Redesign create channel modal
-- Channel > Post lists > post > post replies

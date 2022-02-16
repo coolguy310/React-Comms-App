@@ -64,8 +64,8 @@ export default function Inbox() {
   };
 
   const openInboxPost = async (post: IPost) => {
-    // Route to post's channel
-    navigate(`/${post.channelId}`);
+    // Route to post (if post), or reply (if reply)
+    navigate(`/${post.channelId}/${post.replyTo ? post.replyTo : post.id}`);
   };
 
   const { cursor, setHovered, setSelected } = useArrowNavigation(
@@ -98,8 +98,15 @@ export default function Inbox() {
         )}
 
         {sortedInbox.map((post, i) => {
-          const { id, authorImage, authorName, channelName, text, createdAt } =
-            post;
+          const {
+            id,
+            authorImage,
+            authorName,
+            channelName,
+            subject,
+            text,
+            createdAt,
+          } = post;
           return (
             <InboxItem
               className={`item ${isActive && i === cursor ? "active" : ""}`}
@@ -138,11 +145,18 @@ export default function Inbox() {
                 >
                   {channelName}
                 </Text>
-                <InboxText
-                  dangerouslySetInnerHTML={{
-                    __html: `<div>${text}</div>`,
-                  }}
-                />
+                <Flex alignCenter>
+                  {subject && (
+                    <Text css={{ flexShrink: 0 }} fontWeight="bold">
+                      {subject} - &nbsp;
+                    </Text>
+                  )}
+                  <InboxText
+                    dangerouslySetInnerHTML={{
+                      __html: `<div>${text}</div>`,
+                    }}
+                  />
+                </Flex>
               </Box>
               <Flex alignEnd css={{ width: "100%", maxWidth: "20rem" }}>
                 <TriageActions

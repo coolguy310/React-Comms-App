@@ -50,7 +50,7 @@ export default function ChannelView() {
       </Flex>
       <Box as="hr" css={{ marginTop: "2rem" }} />
       {channelPosts.map((post, i) => {
-        const { id, authorImage, authorName, text, createdAt } = post;
+        const { id, authorImage, authorName, subject, text, createdAt } = post;
         return (
           <PostItem
             className={`item ${isActive && i === cursor ? "active" : ""}`}
@@ -77,7 +77,7 @@ export default function ChannelView() {
                 </Text>
               </Box>
             </Flex>
-            <Box css={{ width: "100%" }}>
+            <Box css={{ width: "calc(100% - 14rem)" }}>
               <Text
                 fontSize="xs"
                 fontWeight="bold"
@@ -89,11 +89,18 @@ export default function ChannelView() {
               >
                 # {channel.name}
               </Text>
-              <PostText
-                dangerouslySetInnerHTML={{
-                  __html: `<div>${text}</div>`,
-                }}
-              />
+              <Flex alignCenter>
+                {subject && (
+                  <Text css={{ flexShrink: 0 }} fontWeight="bold">
+                    {subject} - &nbsp;
+                  </Text>
+                )}
+                <PostText
+                  dangerouslySetInnerHTML={{
+                    __html: `<div>${text}</div>`,
+                  }}
+                />
+              </Flex>
             </Box>
           </PostItem>
         );

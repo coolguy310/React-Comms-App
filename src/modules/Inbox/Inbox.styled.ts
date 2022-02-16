@@ -25,6 +25,7 @@ export const InboxItem = styled("div", {
 });
 
 export const InboxText = styled(Text, {
+  fontSize: "small",
   whiteSpace: "nowrap",
   overflow: "hidden",
   textOverflow: "ellipsis",

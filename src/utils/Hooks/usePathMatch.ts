@@ -8,7 +8,7 @@ export default function usePathMatch(pathname: string, pattern: string) {
       path: pattern,
       end: true,
     },
-    pathname
+    pathname || ""
   );
   return match;
 }

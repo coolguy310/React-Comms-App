@@ -17,6 +17,7 @@ export const PostItem = styled("div", {
 });
 
 export const PostText = styled(Text, {
+  fontSize: "small",
   whiteSpace: "nowrap",
   overflow: "hidden",
   textOverflow: "ellipsis",

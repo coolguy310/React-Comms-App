@@ -18,6 +18,7 @@ export interface IChannel {
 }
 
 export interface IPost {
+  subject?: string;
   text: string;
   authorId: string;
   authorEmail: string;
@@ -25,7 +26,7 @@ export interface IPost {
   authorName: string;
   channelId: string;
   channelName: string;
-  isFirstPost?: boolean;
+  replyTo: string | null;
   id: string;
   mentions: string[];
   createdAt: Date;

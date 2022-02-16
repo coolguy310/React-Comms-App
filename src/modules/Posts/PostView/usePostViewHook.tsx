@@ -42,11 +42,12 @@ export default function usePostViewHook() {
   }, [params.id]);
 
   // Get the first post in the channel
-  const firstPost = channelPosts.find(({ isFirstPost }) => isFirstPost);
+  const firstPost = channelPosts.find(({ id }) => id === params.postId);
 
-  const postReplies = channelPosts.filter(({ isFirstPost }) => !isFirstPost);
+  // Get replies to the first post
+  const postReplies = channelPosts.filter(
+    ({ replyTo }) => replyTo === params.postId
+  );
 
-  const sortedReplies = sortByDate(postReplies);
-
-  return { channel, channelPosts, firstPost, sortedReplies };
+  return { channel, firstPost, replies: sortByDate(postReplies) };
 }

@@ -48,7 +48,7 @@ export default function AuthLayout() {
         callbacks: {
           // Hide arrow key navigation when kbar is opened
           onOpen: () => setActiveSection(null),
-          onClose: () => setActiveSection("inbox"),
+          onClose: () => setActiveSection(location.pathname),
         },
         disableScrollbarManagement: true,
       }}

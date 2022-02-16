@@ -18,14 +18,11 @@ import { IUser } from "utils/types";
 import { useRegisterActions } from "kbar";
 
 interface PostReplyProps {
-  isFirstPost: boolean;
+  replyTo: string;
   channelName: string;
 }
 
-export default function PostReply({
-  isFirstPost,
-  channelName,
-}: PostReplyProps) {
+export default function PostReply({ channelName, replyTo }: PostReplyProps) {
   const [newReplyText, setReplyText] = useState<string>("");
   const [mentions, setMentions] = useState<SuggestionDataItem[]>([]);
   const [users, setUsers] = useState<IUser[]>([]);
@@ -55,13 +52,13 @@ export default function PostReply({
       authorEmail: auth.currentUser!.email,
       authorImage: auth.currentUser!.photoURL,
       authorName: auth.currentUser!.displayName,
-      isFirstPost,
       channelId: params.id,
       id: nanoid(),
       mentions: mentions.map(({ id }) => id), // Map mentions into an array of mentioned user ids
       channelName,
       createdAt: new Date().toISOString(),
       done: false,
+      replyTo,
       triagedUntil: null,
     };
 
@@ -86,9 +83,7 @@ export default function PostReply({
     [newReplyText]
   );
 
-  let placeholderText = "Write a comment here";
-
-  if (isFirstPost) placeholderText = "Write the first post here";
+  let placeholderText = "Write a reply here";
 
   const userSuggestions: SuggestionDataItem[] = users.map(({ uid, name }) => ({
     id: uid,

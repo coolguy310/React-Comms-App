@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./firebase";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AuthLayout from "components/layouts/AuthLayout/AuthLayout";
@@ -15,6 +15,17 @@ function App() {
   const [inbox, setInbox] = useState<IPost[] | null>(null);
   const [users, setUsers] = useState<IUser[]>([]);
   const [activeSection, setActiveSection] = useState<string>("/"); // this is the pathname to the section where the arrow key navigation is being focused on, defaults to "/"
+
+  // Disable default action of tab key across the app
+  useEffect(() => {
+    function disableTabKey(event: any) {
+      if (event.which === 9) {
+        event.preventDefault();
+      }
+    }
+    window.addEventListener("keydown", disableTabKey, true);
+    return () => window.removeEventListener("keydown", disableTabKey, true);
+  }, []);
 
   return (
     // Declare context provider values

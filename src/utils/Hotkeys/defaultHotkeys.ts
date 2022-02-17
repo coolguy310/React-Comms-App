@@ -19,7 +19,7 @@ export const defaultHotkeys = ({ onClickLink }: HotkeyActionProps) => {
     {
       id: "open-menu",
       name: "Open Comms commands",
-      shortcut: ["ctrl", "k"],
+      shortcut: ["⌘", "k"],
       keywords: "commands list",
     },
   ];

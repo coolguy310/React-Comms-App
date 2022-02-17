@@ -48,7 +48,7 @@ export default function useChannelCreateHook() {
 
   const { name, description, classification } = channelDetails;
 
-  // Listen for CTRL + Enter then, trigger handleSubmit()
+  // Listen for ⌘ + Enter then, trigger handleSubmit()
   useEffect(() => {
     function handleCtrlEnter(event: any) {
       if (

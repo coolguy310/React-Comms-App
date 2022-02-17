@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Box from "components/ui/Box/Box";
 import { MentionsInput, Mention } from "react-mentions";
 import Flex from "components/ui/Flex/Flex";
@@ -24,8 +24,10 @@ const tagPrefix = (photoURL?: string) =>
 
 export default function PostNew() {
   const {
+    tagRef,
     recipients,
     channels,
+    users,
     newPostSubject,
     setNewPostSubject,
     newPostText,
@@ -48,9 +50,10 @@ export default function PostNew() {
       <Flex alignCenter>
         <Text css={{ width: "4rem" }}>To:</Text>
         <ReactTags
+          ref={tagRef}
           placeholderText="Add recipients"
           tags={recipients}
-          suggestions={channels}
+          suggestions={[...channels, ...users]}
           onDelete={onTagDelete}
           onAddition={onTagAddition}
           tagComponent={({ tag, onDelete }: any) => {
@@ -132,11 +135,12 @@ export default function PostNew() {
         </MentionsInput>
 
         <Flex justifyEnd alignCenter css={{ marginTop: 16 }}>
-          <Box css={{ padding: "0.5rem 1rem" }} as="kbd">
-            CTRL
+          <Box css={{ padding: "0.5rem 1rem", margin: "0 0.75rem" }} as="kbd">
+            ⌘
           </Box>
+          +
           <Box as="kbd" css={{ margin: "0 0.75rem", padding: "0.5rem 1rem" }}>
-            ENTER
+            RETURN
           </Box>
           <Text>to send</Text>
         </Flex>

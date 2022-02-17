@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getAuth } from "firebase/auth";
 import { SuggestionDataItem } from "react-mentions";
 import { doc, Firestore, setDoc } from "firebase/firestore";
@@ -14,6 +14,8 @@ export default function usePostNewHook() {
   const [mentions, setMentions] = useState<SuggestionDataItem[]>([]);
   const [recipients, setRecipients] = useState<any[]>([]);
 
+  const tagRef = useRef<any>(null);
+
   const auth = getAuth();
   const { channels, users } = useAppContext();
   let [searchParams] = useSearchParams();
@@ -21,6 +23,10 @@ export default function usePostNewHook() {
 
   // Get the channelId from searchParams
   const channelId = searchParams.get("channelId");
+
+  useEffect(() => {
+    tagRef.current.focusInput();
+  }, []);
 
   useEffect(() => {
     // If there's a channelId in the URL searchParams, then update the recipients array with the channel of that id
@@ -78,8 +84,9 @@ export default function usePostNewHook() {
     (newTag) => {
       // Avoid repitition of recipients
       if (!recipients.find(({ id }) => id === newTag.id)) {
+        const user = users.find(({ uid }) => uid === newTag.id);
         // If tag belongs to a user, append the user's photoURL
-        const photoURL = users.find(({ uid }) => uid === newTag.id)?.photoURL;
+        const photoURL = user?.photoURL;
         setRecipients([...recipients, { ...newTag, photoURL }]);
       }
     },
@@ -110,7 +117,9 @@ export default function usePostNewHook() {
     newPostText,
     newPostSubject,
     mentions,
+    tagRef,
     channels,
+    users: users.map((user) => ({ ...user, id: user.uid })),
     recipients,
     setRecipients,
     setNewPostText,

@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect } from "react";
 import db from "../../../firebase";
 import { onSnapshot, collection } from "firebase/firestore";
-import React, { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { IChannel } from "utils/types";
 import ChannelCreate from "../ChannelCreate/ChannelCreate";
 import Box from "components/ui/Box/Box";
@@ -30,7 +30,7 @@ export default function ChannelList() {
   }, []);
 
   // Route to a channel
-  const goToChannel = async (channel: IChannel) => {
+  const goToChannel = (channel: IChannel) => {
     navigate(`/${channel.id}`);
   };
 
@@ -59,27 +59,26 @@ export default function ChannelList() {
       </Box>
       <Box css={{ marginTop: 12 }}>
         {sortedChannels.map((channel, i) => (
-          <Link key={channel.id} to={`/${channel.id}`}>
-            <Text
-              className={`item ${isActive && i === cursor ? "active" : ""}`}
-              onMouseEnter={() => setHovered(channel)}
-              onMouseLeave={() => setHovered(undefined)}
-              onClick={() => {
-                setSelected(channel);
-                goToChannel(channel);
-              }}
-              css={{
-                cursor: "pointer",
-                padding: "6px 0",
-                "&:hover": { background: "#a3a2a23a", fontWeight: "bold" },
-                "&.active": {
-                  background: "#a3a2a23a",
-                },
-              }}
-            >
-              # {channel.name}
-            </Text>
-          </Link>
+          <Text
+            key={channel.id}
+            className={`item ${isActive && i === cursor ? "active" : ""}`}
+            onMouseEnter={() => setHovered(channel)}
+            onMouseLeave={() => setHovered(undefined)}
+            onClick={() => {
+              setSelected(channel);
+              goToChannel(channel);
+            }}
+            css={{
+              cursor: "pointer",
+              padding: "6px 0",
+              "&:hover": { background: "#a3a2a23a", fontWeight: "bold" },
+              "&.active": {
+                background: "#a3a2a23a",
+              },
+            }}
+          >
+            # {channel.name}
+          </Text>
         ))}
       </Box>
     </Box>

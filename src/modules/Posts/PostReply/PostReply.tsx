@@ -1,21 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Avatar from "components/ui/Avatar/Avatar";
 import Box from "components/ui/Box/Box";
 import Button from "components/ui/Button/Button";
 import { getAuth } from "firebase/auth";
 import { MentionsInput, Mention, SuggestionDataItem } from "react-mentions";
-import {
-  collection,
-  doc,
-  Firestore,
-  onSnapshot,
-  setDoc,
-} from "firebase/firestore";
+import { doc, Firestore, setDoc } from "firebase/firestore";
 import db from "../../../firebase";
 import { nanoid } from "nanoid";
 import { useParams } from "react-router-dom";
-import { IUser } from "utils/types";
 import { useRegisterActions } from "kbar";
+import { useAppContext } from "utils/Context/Context";
 
 interface PostReplyProps {
   replyTo: string;
@@ -25,19 +19,11 @@ interface PostReplyProps {
 export default function PostReply({ channelName, replyTo }: PostReplyProps) {
   const [newReplyText, setReplyText] = useState<string>("");
   const [mentions, setMentions] = useState<SuggestionDataItem[]>([]);
-  const [users, setUsers] = useState<IUser[]>([]);
+
+  const { users } = useAppContext();
 
   const auth = getAuth();
   const params = useParams();
-
-  useEffect(() => {
-    // Fetch users and map to users state
-    const unsub = onSnapshot(collection(db, "users"), (snapshot) => {
-      setUsers(snapshot.docs.map((doc) => doc.data() as IUser));
-    });
-
-    return unsub;
-  }, [auth.currentUser]);
 
   const submitReply = async (event?: React.FormEvent<HTMLFormElement>) => {
     event?.preventDefault();

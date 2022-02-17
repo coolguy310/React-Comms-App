@@ -1,12 +1,14 @@
 import { createContext, useContext } from "react";
-import { IChannel, IPost } from "utils/types";
+import { IChannel, IPost, IUser } from "utils/types";
 
 interface AppContextProps {
   channels: IChannel[];
   setChannels: (channels: IChannel[]) => void;
+  users: IUser[];
+  setUsers: (channels: IUser[]) => void;
   inbox: IPost[] | null;
   setInbox: (inbox: IPost[]) => void;
-  activeSection: "channels" | "inbox" | string;
+  activeSection: "channels" | string;
   setActiveSection: (section?: any) => void;
 }
 
@@ -15,7 +17,9 @@ const AppContext = createContext<AppContextProps>({
   setChannels: () => {},
   inbox: [],
   setInbox: () => {},
-  activeSection: "inbox",
+  users: [],
+  setUsers: () => {},
+  activeSection: "/",
   setActiveSection: () => {},
 }); // Here, we are initializing our context states
 

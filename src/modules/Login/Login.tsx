@@ -28,6 +28,7 @@ export default function Login() {
 
       if (!snap.exists()) {
         await setDoc(doc(db, "users", user.uid), {
+          id: user.uid,
           uid: user.uid,
           name: user.displayName,
           authProvider: "google",

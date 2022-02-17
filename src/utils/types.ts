@@ -1,4 +1,5 @@
 export interface IUser {
+  id?: string;
   uid: string;
   name: string;
   authProvider: string;
@@ -12,6 +13,7 @@ export interface IChannel {
   id: string;
   name: string;
   description?: string;
+  invitees: Partial<IUser>[];
   classification: "public" | "private";
   creatorId: string;
   createdAt: Date;

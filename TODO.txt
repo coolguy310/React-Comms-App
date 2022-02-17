@@ -1,6 +1,6 @@
 Show avatar in post mention
 Sort inbox with request response on top always
 force hotkeying in notification settings and inbox post actions
-
-Feedback:
-- Redesign create channel modal
+add all users from channel
+fix key navigation enter with unmount issue
+login 

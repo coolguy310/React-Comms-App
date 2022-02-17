@@ -6,13 +6,14 @@ import Login from "modules/Login/Login";
 import Inbox from "modules/Inbox/Inbox";
 import ChannelView from "modules/Channels/ChannelView/ChannelView";
 import { AppProvider } from "utils/Context/Context";
-import { IChannel, IPost } from "utils/types";
+import { IChannel, IPost, IUser } from "utils/types";
 import PostView from "modules/Posts/PostView/PostView";
 import PostNew from "modules/Posts/PostNew/PostNew";
 
 function App() {
   const [channels, setChannels] = useState<IChannel[]>([]);
   const [inbox, setInbox] = useState<IPost[] | null>(null);
+  const [users, setUsers] = useState<IUser[]>([]);
   const [activeSection, setActiveSection] = useState<string>("/"); // this is the pathname to the section where the arrow key navigation is being focused on, defaults to "/"
 
   return (
@@ -23,6 +24,8 @@ function App() {
         setChannels,
         inbox,
         setInbox,
+        users,
+        setUsers,
         activeSection,
         setActiveSection,
       }}

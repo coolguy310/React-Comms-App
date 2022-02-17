@@ -2,17 +2,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
 import { SuggestionDataItem } from "react-mentions";
-import {
-  collection,
-  doc,
-  Firestore,
-  onSnapshot,
-  setDoc,
-} from "firebase/firestore";
+import { doc, Firestore, setDoc } from "firebase/firestore";
 import db from "../../../firebase";
 import { nanoid } from "nanoid";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { IUser } from "utils/types";
 import { useAppContext } from "utils/Context/Context";
 
 export default function usePostNewHook() {
@@ -20,10 +13,9 @@ export default function usePostNewHook() {
   const [newPostSubject, setNewPostSubject] = useState<string>("");
   const [mentions, setMentions] = useState<SuggestionDataItem[]>([]);
   const [recipients, setRecipients] = useState<any[]>([]);
-  const [users, setUsers] = useState<IUser[]>([]);
 
   const auth = getAuth();
-  const { channels } = useAppContext();
+  const { channels, users } = useAppContext();
   let [searchParams] = useSearchParams();
   let navigate = useNavigate();
 
@@ -38,15 +30,6 @@ export default function usePostNewHook() {
       if (selectedChannel) setRecipients((prev) => [...prev, selectedChannel]);
     }
   }, [channels, channelId]);
-
-  useEffect(() => {
-    // Fetch users and map to users state
-    const unsub = onSnapshot(collection(db, "users"), (snapshot) => {
-      setUsers(snapshot.docs.map((doc) => doc.data() as IUser));
-    });
-
-    return unsub;
-  }, [auth.currentUser]);
 
   const submitNewPost = async () => {
     if (!newPostText.trim() || !newPostSubject.trim() || !recipients.length)
@@ -95,7 +78,9 @@ export default function usePostNewHook() {
     (newTag) => {
       // Avoid repitition of recipients
       if (!recipients.find(({ id }) => id === newTag.id)) {
-        setRecipients([...recipients, newTag]);
+        // If tag belongs to a user, append the user's photoURL
+        const photoURL = users.find(({ uid }) => uid === newTag.id)?.photoURL;
+        setRecipients([...recipients, { ...newTag, photoURL }]);
       }
     },
     [recipients]

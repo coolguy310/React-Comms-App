@@ -6,6 +6,21 @@ import Text from "components/ui/Text/Text";
 import Input from "components/forms/Input/Input";
 import usePostNewHook from "./usePostNewHook";
 import ReactTags from "react-tag-autocomplete";
+import { IoMdClose } from "react-icons/io";
+import Avatar from "components/ui/Avatar/Avatar";
+
+const tagPrefix = (photoURL?: string) =>
+  photoURL ? (
+    <Avatar
+      src={photoURL}
+      css={{
+        width: "1rem",
+        height: "1rem",
+      }}
+    />
+  ) : (
+    "#"
+  );
 
 export default function PostNew() {
   const {
@@ -38,17 +53,36 @@ export default function PostNew() {
           suggestions={channels}
           onDelete={onTagDelete}
           onAddition={onTagAddition}
-          // tagComponent={({ tag, removeButtonText, onDelete }) => {
-          //   return (
-          //     <button
-          //       type="button"
-          //       // title={`${removeButtonText}: ${tag.name}`}
-          //       // onClick={onDelete}
-          //     >
-          //       {tag.name}
-          //     </button>
-          //   );
-          // }}
+          tagComponent={({ tag, onDelete }: any) => {
+            return (
+              <Box
+                css={{
+                  display: "inline-flex",
+                  background: "$gray3",
+                  border: "1px solid lightgray",
+                  padding: "0.25rem 0.5rem 0.25rem 0.75rem",
+                  marginRight: 8,
+                  borderRadius: 6,
+                  alignItems: "center",
+                }}
+              >
+                {tagPrefix(tag.photoURL)}
+                <Text css={{ marginRight: 4 }}>&nbsp; {tag.name}</Text>
+                <Flex as="button" onClick={onDelete}>
+                  <IoMdClose />
+                </Flex>
+              </Box>
+            );
+          }}
+          minQueryLength={1}
+          suggestionComponent={({ item }: any) => {
+            return (
+              <Flex alignCenter>
+                {tagPrefix(item.photoURL)}
+                <Text>&nbsp;{item.name}</Text>
+              </Flex>
+            );
+          }}
         />
       </Flex>
       <Box as="hr" css={{ margin: "0.5rem 0" }} />

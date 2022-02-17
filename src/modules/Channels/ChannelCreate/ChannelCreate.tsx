@@ -1,97 +1,34 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Input from "components/forms/Input/Input";
-import Modal from "components/ui/Modal/Modal";
-import { IoAdd } from "react-icons/io5";
-import db from "../../../firebase";
-import { Firestore, setDoc, doc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
 import Box from "components/ui/Box/Box";
-import Text from "components/ui/Text/Text";
-import { getAuth } from "firebase/auth";
-import { nanoid } from "nanoid";
-import { useRegisterActions } from "kbar";
 import Flex from "components/ui/Flex/Flex";
+import Modal from "components/ui/Modal/Modal";
+import Text from "components/ui/Text/Text";
+import { IoMdClose } from "react-icons/io";
+import { IoAdd } from "react-icons/io5";
 import { MdInfo } from "react-icons/md";
+import ReactTags from "react-tag-autocomplete";
 import { Tooltip } from "react-tippy";
 import "react-tippy/dist/tippy.css";
-
-const initialChannelDetails = {
-  name: "",
-  description: "",
-  invitees: "",
-  classification: "public",
-};
+import useChannelCreateHook from "./useChannelCreateHook";
 
 export default function ChannelCreate() {
-  const [channelDetails, setChannelDetails] = useState(initialChannelDetails);
-  const [isOpen, setIsOpen] = useState(false);
-
-  const { name, description, invitees, classification } = channelDetails;
-
-  useEffect(() => {
-    function handleCtrlEnter(event: any) {
-      if (
-        event.ctrlKey &&
-        event.key === "Enter" &&
-        event.defaultPrevented === false
-      ) {
-        handleSubmit();
-      }
-    }
-    window.addEventListener("keydown", handleCtrlEnter, true);
-    return () => window.removeEventListener("keydown", handleCtrlEnter, true);
-  }, [channelDetails]);
-
-  const handleChange = (name: string, value: any) => {
-    setChannelDetails({
-      ...channelDetails,
-      [name]: value,
-    });
-  };
-
-  const auth = getAuth();
-  let navigate = useNavigate();
-
-  const onClose = () => {
-    setIsOpen(false);
-    setChannelDetails(initialChannelDetails);
-  };
-
-  const handleSubmit = async () => {
-    if (!name) return;
-
-    const payload = {
-      id: nanoid(),
-      creatorId: auth!.currentUser?.uid,
-      name,
-      description,
-      invitees,
-      classification,
-      createdAt: new Date().toISOString(),
-    };
-
-    // Add to channel collection
-    await setDoc(doc(db as Firestore, "channels", payload.id), payload);
-
-    // Then route to the newly created channel
-    navigate(`/${payload.id}`);
-
-    // Close modal and reset channel name
-    onClose();
-  };
-
-  // Register hotkey for opening create channel modal
-  useRegisterActions([
-    {
-      id: "open-channel-modal",
-      name: "Create a new channel",
-      section: "Channels",
-      shortcut: ["n", "c"],
-      keywords: "channel new",
-      perform: () => setIsOpen(true),
-    },
-  ]);
+  const {
+    name,
+    description,
+    classification,
+    invitees,
+    users,
+    channels,
+    onTagAddition,
+    onTagDelete,
+    handleChange,
+    isOpen,
+    setIsOpen,
+    onClose,
+    tagPrefix,
+  } = useChannelCreateHook();
 
   return (
     <div>
@@ -182,21 +119,46 @@ export default function ChannelCreate() {
               >
                 Invite to Channel
               </Text>
-              <Input
-                id="invitees"
-                required
-                css={{
-                  height: "2.5rem",
-                  border: 0,
-                  borderBottom: "1px solid lightgray",
-                  padding: "0",
+
+              <ReactTags
+                placeholderText="Invite people to your channel"
+                tags={invitees}
+                suggestions={[...users, ...channels]}
+                onDelete={onTagDelete}
+                onAddition={onTagAddition}
+                tagComponent={({ tag, onDelete }: any) => {
+                  return (
+                    <Box
+                      css={{
+                        display: "inline-flex",
+                        background: "$gray3",
+                        border: "1px solid lightgray",
+                        padding: "0.25rem 0.5rem 0.25rem 0.75rem",
+                        marginRight: 8,
+                        borderRadius: 6,
+                        alignItems: "center",
+                      }}
+                    >
+                      {tagPrefix(tag.photoURL)}
+                      <Text css={{ marginRight: 4 }}>&nbsp; {tag.name}</Text>
+                      <Flex as="button" onClick={onDelete}>
+                        <IoMdClose />
+                      </Flex>
+                    </Box>
+                  );
                 }}
-                placeholder="Invite people to your channel"
-                value={invitees}
-                onChange={(event) =>
-                  handleChange("invitees", event.target.value)
-                }
+                minQueryLength={1}
+                suggestionComponent={({ item }: any) => {
+                  return (
+                    <Flex alignCenter>
+                      {tagPrefix(item.photoURL)}
+                      <Text css={{ flexShrink: 0 }}>&nbsp;{item.name}</Text>
+                    </Flex>
+                  );
+                }}
               />
+
+              <Box as="hr" />
             </Box>
             <Flex alignCenter css={{ marginBottom: 16 }}>
               <Text

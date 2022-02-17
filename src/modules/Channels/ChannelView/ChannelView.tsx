@@ -9,6 +9,7 @@ import useChannelViewHook from "./useChannelViewHook";
 import Button from "components/ui/Button/Button";
 import { useNavigate } from "react-router-dom";
 import { PostItem, PostText } from "./ChannelView.styled";
+import { HiPencilAlt } from "react-icons/hi";
 
 export default function ChannelView() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ export default function ChannelView() {
     openChannelPost,
   } = useChannelViewHook();
 
-  if (!channel) {
+  if (!channel || !channelPosts) {
     return null;
   }
 
@@ -49,6 +50,46 @@ export default function ChannelView() {
         </Flex>
       </Flex>
       <Box as="hr" css={{ marginTop: "2rem" }} />
+      {/* If there are no posts, Show view to create a new post */}
+      {!channelPosts.length && (
+        <Flex
+          justifyCenter
+          css={{
+            marginTop: 40,
+          }}
+        >
+          <Flex
+            alignCenter
+            onClick={() => navigate(`/new?channelId=${channel.id}`)}
+            css={{
+              cursor: "pointer",
+              width: "20rem",
+              padding: "1rem 2rem",
+              border: "1px solid lightgray",
+              backgroundColor: isActive ? "$gray2" : "white",
+              boxShadow:
+                "rgb(55 71 80 / 12%) 0px 0px 0px 0.5px, rgb(55 71 80 / 6%) 0px 4px 8px",
+              borderRadius: 8,
+            }}
+          >
+            <Flex
+              alignCenter
+              justifyCenter
+              css={{
+                width: 30,
+                height: 30,
+                backgroundColor: "$gray3",
+                borderRadius: 8,
+                marginRight: 20,
+              }}
+            >
+              <HiPencilAlt />
+            </Flex>
+            <Text>Start the first post</Text>
+          </Flex>
+        </Flex>
+      )}
+
       {channelPosts.map((post, i) => {
         const { id, authorImage, authorName, subject, text, createdAt } = post;
         return (

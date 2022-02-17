@@ -71,17 +71,13 @@ export default function useAuthLayoutHook() {
   // Switch active sections when left or right arrow keys are pressed
   useEffect(() => {
     if (leftPress) {
-      setActiveSection((prevState: any) =>
-        prevState === location.pathname ? "channels" : location.pathname
-      );
+      setActiveSection("channels");
     }
   }, [leftPress, location.pathname, setActiveSection]);
 
   useEffect(() => {
     if (rightPress) {
-      setActiveSection((prevState: any) =>
-        prevState === location.pathname ? "channels" : location.pathname
-      );
+      setActiveSection(location.pathname);
     }
   }, [location.pathname, rightPress, setActiveSection]);
 

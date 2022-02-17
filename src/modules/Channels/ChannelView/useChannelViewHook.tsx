@@ -17,7 +17,7 @@ import usePathMatch from "utils/Hooks/usePathMatch";
 
 export default function useChannelViewHook() {
   const [channel, setChannel] = useState<IChannel | null>(null);
-  const [channelPosts, setChannelPosts] = useState<IPost[]>([]);
+  const [channelPosts, setChannelPosts] = useState<IPost[] | null>(null);
 
   const params = useParams();
   const navigate = useNavigate();
@@ -27,8 +27,9 @@ export default function useChannelViewHook() {
   const isActive = !!usePathMatch(activeSection, "/:id");
 
   useEffect(() => {
-    // Clear channel states when switching between channel routes
+    // Clear channel and channelPost states when switching between channel routes
     setChannel(null);
+    setChannelPosts(null);
   }, [params.id]);
 
   useEffect(() => {
@@ -60,19 +61,27 @@ export default function useChannelViewHook() {
   }, [params.id]);
 
   const openChannelPost = (post: IPost) => {
-    // Route to channel's post
-    navigate(`/${params.id}/${post.id}`);
+    // If there are no channel posts, route to the `new post` page
+    if (channelPosts?.length) {
+      navigate(`/${params.id}/${post.id}`);
+    } else {
+      // else, Route to channel's post
+      navigate(`/new?channelId=${channel!.id}`);
+    }
   };
+
+  // When there are no channelPosts, pass a non-empty array as list into the `useArrowNavigation`. This is so that the onSelect callback can be triggered
+  const navigationList = channelPosts?.length ? channelPosts : ["create"];
 
   const { cursor, setHovered, setSelected } = useArrowNavigation(
     isActive,
-    channelPosts,
+    navigationList,
     openChannelPost
   );
 
   return {
     channel,
-    channelPosts: sortByDate(channelPosts),
+    channelPosts: channelPosts && sortByDate(channelPosts),
     cursor,
     isActive,
     setHovered,

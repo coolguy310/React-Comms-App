@@ -211,9 +211,13 @@ export default function ChannelCreate() {
               </Flex>
             </Flex>
             <Flex justifyEnd alignCenter css={{ marginTop: 24 }}>
-              <Box css={{ padding: "0.5rem 1rem" }} as="kbd">
+              <Box
+                css={{ padding: "0.5rem 1rem", margin: "0 0.75rem" }}
+                as="kbd"
+              >
                 ⌘
               </Box>
+              +
               <Box
                 as="kbd"
                 css={{ margin: "0 0.75rem", padding: "0.5rem 1rem" }}

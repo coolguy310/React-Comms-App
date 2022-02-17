@@ -69,8 +69,9 @@ export default function ChannelList() {
               goToChannel(channel);
             }}
             css={{
+              borderRadius: 6,
               cursor: "pointer",
-              padding: "6px 0",
+              padding: "6px 8px",
               "&:hover": { background: "#a3a2a23a", fontWeight: "bold" },
               "&.active": {
                 background: "#a3a2a23a",

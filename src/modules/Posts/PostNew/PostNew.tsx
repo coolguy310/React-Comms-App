@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import Box from "components/ui/Box/Box";
 import { MentionsInput, Mention } from "react-mentions";
 import Flex from "components/ui/Flex/Flex";

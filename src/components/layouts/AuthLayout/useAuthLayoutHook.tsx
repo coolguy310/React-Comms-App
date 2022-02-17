@@ -11,9 +11,11 @@ export default function useAuthLayoutHook() {
   const auth = getAuth();
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState(() => auth.currentUser);
-  const { inbox, setInbox, setActiveSection } = useAppContext();
+  const { inbox, setInbox, activeSection, setActiveSection } = useAppContext();
+  const enterPress = useKeyPress("Enter");
   const leftPress = useKeyPress("ArrowLeft");
   const rightPress = useKeyPress("ArrowRight");
+  const downPress = useKeyPress("ArrowDown");
 
   let location = useLocation();
   const navigate = useNavigate();
@@ -68,10 +70,18 @@ export default function useAuthLayoutHook() {
     }
   };
 
+  // If Enter is pressed and inbox button is active, navigate to inbox
+  useEffect(() => {
+    if (enterPress && activeSection === "inbox") {
+      navigate("/");
+    }
+  }, [enterPress, activeSection, navigate]);
+
   // Switch active sections when left or right arrow keys are pressed
+
   useEffect(() => {
     if (leftPress) {
-      setActiveSection("channels");
+      setActiveSection("inbox");
     }
   }, [leftPress, location.pathname, setActiveSection]);
 
@@ -80,6 +90,12 @@ export default function useAuthLayoutHook() {
       setActiveSection(location.pathname);
     }
   }, [location.pathname, rightPress, setActiveSection]);
+
+  useEffect(() => {
+    if (downPress && activeSection === "inbox") {
+      setActiveSection("channels");
+    }
+  }, [downPress, location.pathname, activeSection, setActiveSection]);
 
   return { initializing, user, inbox, location, onClickLink, signOut };
 }

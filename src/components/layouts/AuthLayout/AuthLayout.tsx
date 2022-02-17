@@ -25,7 +25,7 @@ export default function AuthLayout() {
   const { initializing, user, location, onClickLink, inbox, signOut } =
     useAuthLayoutHook();
 
-  const { setActiveSection } = useAppContext();
+  const { activeSection, setActiveSection } = useAppContext();
 
   if (initializing)
     return (
@@ -72,7 +72,14 @@ export default function AuthLayout() {
                 </Text>
               </Flex>
               <Link to="/">
-                <LinkItem>
+                <LinkItem
+                  css={{
+                    padding: "0.25rem 0.5rem",
+                    borderRadius: 6,
+                    backgroundColor:
+                      activeSection === "inbox" ? "$gray5" : "transparent",
+                  }}
+                >
                   <Text fontSize="lg">Inbox</Text>
                   {inbox && inbox.length > 0 && <Badge>{inbox?.length}</Badge>}
                 </LinkItem>

@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
+import { useAppContext } from "utils/Context/Context";
 import { useKeyPress } from "./useKeyPress";
 
 // Configures arrow key navigation for a list view
@@ -8,6 +9,7 @@ export default function useArrowNavigation(
   list: any | any[], // List of items to navigate through
   onSelect: (value: any) => void // callback function after an item on the link has been selected
 ) {
+  const { activeSection, setActiveSection } = useAppContext();
   const [selected, setSelected] = useState<any>(undefined);
   const downPress = useKeyPress("ArrowDown");
   const upPress = useKeyPress("ArrowUp");
@@ -17,11 +19,18 @@ export default function useArrowNavigation(
 
   const canChangeCursor = isActive && list && list!.length;
 
+  // highlight first channel anytime `channels` is active
+  useEffect(() => {
+    if (activeSection === "channels") {
+      setCursor(0);
+    }
+  }, [activeSection]);
+
   // Navigate down the list, and go back to top after getting to the bottom
   useEffect(() => {
-    if (canChangeCursor && downPress) {
+    if (canChangeCursor && downPress && activeSection === "channels") {
       setCursor((prevState) =>
-        prevState < list!.length - 1 ? prevState + 1 : 0
+        prevState < list!.length - 1 ? prevState + 1 : prevState
       );
     }
   }, [downPress]);
@@ -29,9 +38,12 @@ export default function useArrowNavigation(
   // Navigate up the list, and go back to bottom after getting to the top
   useEffect(() => {
     if (canChangeCursor && upPress) {
-      setCursor((prevState) =>
-        prevState > 0 ? prevState - 1 : list!.length - 1
-      );
+      if (cursor <= 0 && activeSection === "channels") {
+        setActiveSection("inbox");
+        return;
+      }
+
+      setCursor((prevState) => (prevState > 0 ? prevState - 1 : prevState));
     }
   }, [upPress]);
 
